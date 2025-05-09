@@ -1,0 +1,4 @@
+public interface Event {
+    public void setPriority(int priority);
+    public void setName(String name);
+}
