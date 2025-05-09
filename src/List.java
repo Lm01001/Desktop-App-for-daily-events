@@ -3,11 +3,12 @@ import java.util.Scanner;
 public class List implements Event {
 
     Scanner choice = new Scanner(System.in);
-    String name = "Default name";
-    int priority = 1;
+    public static String name = "Default name";
+    static int priority = 1;
 
     public List(int priority, String name) {     //List's constructor
-
+        this.priority = priority;
+        this.name = name;
     }
 
     @Override

@@ -1,26 +1,35 @@
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Task extends List implements Event {
 
     LocalTime now = LocalTime.now();
+    LocalTime hourAndMinutes = LocalTime.of(now.getHour(), now.getMinute());
     String hour = now.toString();
     int index = 0;
     int whichOne = 0;
     HashMap<String, String>tasks = new HashMap<>();
     HashMap<Integer, String>entries = new HashMap<>();
 
-    public Task(int priority, String name,  String hour) {
+    public Task(int priority, String name) {
         super(priority, name);
         System.out.println("Please set the time of the task you want to add.");
         System.out.println("Time should be provided in format HH:MM, otherwise " +
                 "time will be set to current time.");
-        this.hour = choice.nextLine();
-        tasks.put(this.hour, name);
+        hour = choice.nextLine();
+        if(hour.isEmpty() || hour.length() != 5 || hour.charAt(2) != ':') {
+            hour = hourAndMinutes.toString();
+        }
+        System.out.println("Now, choose the name of your task: ");
+        this.name = choice.nextLine();
+        if(this.name.isEmpty()) {
+            this.name = List.name;
+        }
+        tasks.put(this.hour, this.name);
         entries.put(index++, this.hour);
     }
 
@@ -46,6 +55,17 @@ public class Task extends List implements Event {
         }
     }
 
+    public void showExistingTasks() {
+        int taskIndex = 0;
+        if(tasks.isEmpty()) {
+            System.out.println("There are no tasks in the database.");
+            return;
+        }
+        System.out.println("Index   Time      Name");
+        for(Map.Entry<String, String> entry : tasks.entrySet()) {
+            System.out.println(taskIndex + "       " + entry.getKey() + "     " + entry.getValue());
+        }
+    }
     int priority = choice.nextInt();
     @Override
     public void setPriority(int priority) {
@@ -56,5 +76,11 @@ public class Task extends List implements Event {
     @Override
     public void setName(String name) {
         super.setName(name);
+    }
+
+    @Override
+    public String toString() {
+        return "Task: [index] " + index + ". | [hour] " + hour +
+                " | [name] " + name + " | [priority] " + priority;
     }
 }
