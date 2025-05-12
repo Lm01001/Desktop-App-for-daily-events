@@ -4,7 +4,7 @@ public class List implements Event {
 
     Scanner choice = new Scanner(System.in);
     public static String name = "Default name";
-    static int priority = 1;
+    public static int priority = 1;
 
     public List(int priority, String name) {     //List's constructor
         this.priority = priority;
@@ -13,7 +13,6 @@ public class List implements Event {
 
     @Override
     public void setPriority(int priority) {     //Setting default priority
-
         this.priority = choice.nextInt();;
     }
 
