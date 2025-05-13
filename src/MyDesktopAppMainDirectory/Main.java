@@ -15,5 +15,18 @@ public class Main {
         task.showExistingTasks();*/
         ShoppingList s = new ShoppingList(List.priority, List.name, Product.amount, ShoppingList.bought);
         s.addProduct();
+        s.ifBought();
+        System.out.println();
+        //System.out.println(ShoppingList.product);
+
+        for(Integer key : ShoppingList.finalProduct.keySet()){
+            System.out.println(ShoppingList.finalProduct.get(key));
+        }
+
+        System.out.println();
+        s.deleteItem();
+        for(Integer key : ShoppingList.finalProduct.keySet()){
+            System.out.println(ShoppingList.finalProduct.get(key));
+        }
     }
 }

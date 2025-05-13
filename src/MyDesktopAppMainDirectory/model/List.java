@@ -35,7 +35,7 @@ public class List implements Event {
 
     @Override
     public void setName(String name) {      //Setting action's name
-        System.out.println("Please choose name for your task: ");
+        System.out.println("Please choose name of the product You want to add to the list: ");
         List.name = choice.nextLine();
     }
 

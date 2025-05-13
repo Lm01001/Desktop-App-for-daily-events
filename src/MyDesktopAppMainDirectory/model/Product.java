@@ -27,14 +27,4 @@ public class Product extends List {
             }
         }
     }
-
-    @Override
-    public void setPriority(int priority) {
-        super.setPriority(priority);
-    }
-
-    @Override
-    public void setName(String name){
-        super.setName(name);
-    }
 }
