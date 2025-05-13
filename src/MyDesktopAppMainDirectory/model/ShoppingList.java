@@ -4,7 +4,6 @@ import MyDesktopAppMainDirectory.model.Event;
 import java.util.*;
 import org.javatuples.Quartet;
 import java.util.HashMap;
-import java.util.Map;
 
 public class ShoppingList extends Product {
     int index = 0;
