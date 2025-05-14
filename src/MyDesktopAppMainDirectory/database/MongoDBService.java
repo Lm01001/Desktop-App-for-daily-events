@@ -16,13 +16,13 @@ public class MongoDBService {
     }
 
     public void insertShoppingList(ShoppingList shoppinglist) {
-        Document newDocument = new Document("index: ", shoppinglist.getIndex()).append("product: ",
+        Document newDocument = new Document("category: ", "Shopping List").append("index: ", shoppinglist.getIndex()).append("product: ",
                         shoppinglist.getName()).append("amount: ", shoppinglist.getAmount()).append("priority: ", shoppinglist.getPriority()).
                         append("status: ", shoppinglist.getStatus());
     }
 
-    public void insertCalendarEvent(Calendar calendar) {
-
+   /* public void insertCalendarEvent(Calendar calendar) {
+        Document newDocument = new Document("category: ", "Calendar event").append("index");
     }
 
     public void insertTask(Task task) {

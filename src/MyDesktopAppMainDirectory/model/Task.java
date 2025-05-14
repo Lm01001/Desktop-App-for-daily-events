@@ -1,23 +1,79 @@
 package MyDesktopAppMainDirectory.model;
-import MyDesktopAppMainDirectory.model.Event;
-import MyDesktopAppMainDirectory.model.List;
+
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Task extends List {
+    private final LocalTime now = LocalTime.now();
+    public LocalTime getNow() {
+        return now;
+    }
+    private final String nowAsAString = now.toString();
+    public String getNowAsAString() {
+        return nowAsAString;
+    }
 
-    LocalTime now = LocalTime.now();
-    LocalTime hourAndMinutes = LocalTime.of(now.getHour(), now.getMinute());
-    String hour = now.toString();
-    int index = 0;
-    int whichOne = 0;
-    HashMap<String, String>tasks = new HashMap<>();
-    HashMap<Integer, String>entries = new HashMap<>();
+    private final LocalTime hourAndMinutes = LocalTime.of(now.getHour(), now.getMinute());
+    public LocalTime getHourAndMinutes() {
+        return hourAndMinutes;
+    }
+    private final String hourAndMinutesAsAString = hourAndMinutes.toString();
+    public String getHourAndMinutesAsAString() {
+        return hourAndMinutesAsAString;
+    }
 
-    public Task(int priority, String name) {
+    private int index = 0;
+    public int getIndex() {
+        return index;
+    }
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    private String status = "Not Completed";
+    public String getStatus() {
+        return status;
+    }
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    private String howImportant = "Optional";
+    public String getHowImportant() {
+        if(getPriority() == 1) {
+            this.howImportant = "Low priority";
+        } else if(getPriority() == 2) {
+            this.howImportant = "Optional, to do";
+        } else {
+            this.howImportant = "Very important";
+        }
+        return howImportant;
+    }
+
+    //int whichOne = 0;
+    private static record Quartet(int index, String name, String howImportant, String status) {};
+    public Quartet quartetCreator(int index, String name, String howImportant, String status) {
+        return new Quartet(this.index, name, this.howImportant, this.status);
+    }
+
+    private final HashMap<Integer, Quartet>tasks = new HashMap<>();
+    public void addHashMapValue() {
+        Quartet task = quartetCreator(getIndex(), getName(), getHowImportant(), getStatus());
+        tasks.put(getIndex(), task);
+        setIndex(getIndex() + 1);
+    }
+
+    public Task(int priority, String name, int index, String nowAsAString, String howImportant,
+                String status, String hourAndMinutesAsAString) {
         super(priority, name);
-        System.out.println("Please set the time of the task you want to add.");
+        this.index = index;
+        this.howImportant = howImportant;
+        this.status = status;
+    }
+
+    public void setTasksTime() {
+        /*System.out.println("Please set the time of the task you want to add.");
         System.out.println("Time should be provided in format HH:MM, otherwise " +
                 "time will be set to current time.");
         hour = choice.nextLine();
@@ -27,10 +83,10 @@ public class Task extends List {
         System.out.println("Now, choose the name of your task: ");
         this.name = choice.nextLine();
         if(this.name.isEmpty()) {
-            this.name = List.name;
+            this.name = this.name;
         }
         tasks.put(this.hour, this.name);
-        entries.put(index++, this.hour);
+        entries.put(index++, this.hour);*/
     }
 
     public boolean ifCompleted() {      //Used during editing existing list, deleting/unchecking completed tasks
@@ -65,17 +121,6 @@ public class Task extends List {
         for(Map.Entry<String, String> entry : tasks.entrySet()) {
             System.out.println(taskIndex + "       " + entry.getKey() + "     " + entry.getValue());
         }
-    }
-    int priority = choice.nextInt();
-    @Override
-    public void setPriority(int priority) {
-        super.setPriority(priority);
-    }
-
-    String name = choice.nextLine();
-    @Override
-    public void setName(String name) {
-        super.setName(name);
     }
 
     @Override

@@ -16,7 +16,7 @@ public class ShoppingList extends Product {
 
     private int productsIndex = 0;
     public int getProductsIndex() {
-        return productsIndex++;
+        return productsIndex;
     }
     public void setProductsIndex(int productsIndex) {
         this.productsIndex = productsIndex;
@@ -47,6 +47,7 @@ public class ShoppingList extends Product {
     public void addHashMapValue() {
         Quartet product = quartetCreator(getPriority(), getName(), getAmount(), bought);
         finalProduct.put(getProductsIndex(), product);
+        setProductsIndex(getProductsIndex() + 1);
     }
 
     public ShoppingList(int priority, String name, int amount, String status, int index) {
@@ -64,6 +65,7 @@ public class ShoppingList extends Product {
             setStatus("Bought");
             addHashMapValue();
             ShoppingList sl = new ShoppingList(getPriority(), getName(), getAmount(), status, index);
+            setProductsIndex(getProductsIndex() + 1);
             setBought(false);
             setStatus("To buy");
         } else {

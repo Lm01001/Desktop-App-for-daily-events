@@ -2,20 +2,19 @@ package MyDesktopAppMainDirectory.model;
 import java.util.Scanner;
 
 public class Occurrence implements Event {
-
     Scanner choice = new Scanner(System.in);
-    private String date = null;
-    public String getDate() {
-        return date;
-    }
-    public void setDate(String date) {
-        this.date = date;
+
+    private int priority = 1;
+    public int getPriority() {
+        return priority;
     }
 
-    pint priority = 1;
+    String name = "Default name";
+    public String getName() {
+        return name;
+    }
 
-    public Occurrence(String date, int priority, String name) {
-        this.date = choice.nextLine();
+    public Occurrence(int priority, String name) {
         this.priority = priority;
         this.name = name;
     }
@@ -30,7 +29,6 @@ public class Occurrence implements Event {
             try{
                 this.priority = Integer.parseInt(choice.nextLine());
                 if(this.priority >= 1 && this.priority <= 3){
-                    System.out.println("Priority has been set to " + this.priority + ". ");
                     break;
                 }else{
                     System.out.print("Number out of range, please try again: ");
@@ -41,7 +39,6 @@ public class Occurrence implements Event {
         }
     }
 
-    String name = "Default name";
     @Override
     public void setName(String name) {
         System.out.println("Please choose name for your event: ");
