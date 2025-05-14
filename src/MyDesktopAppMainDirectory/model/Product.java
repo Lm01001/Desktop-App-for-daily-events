@@ -4,20 +4,22 @@ import MyDesktopAppMainDirectory.model.List;
 import java.util.Scanner;
 
 public class Product extends List {
-    public static int amount = 0;
-    Scanner scanner = new Scanner(System.in);
+    private int amount = 0;
+    public int getAmount(){
+        return amount;
+    }
 
     public Product(int priority, String name, int amount) {
         super(priority, name);
-        Product.amount = amount;
+        this.amount = amount;
     }
 
     public void setAmount(int amount) {       //Choosing amount/number to buy for each item
         while(true){
             System.out.println("Please choose quantity of products you want to add (max up to 1000): ");
             try{
-                Product.amount = Integer.parseInt(scanner.nextLine());
-                if(Product.amount <= 1000 && Product.amount > 0) {
+                this.amount = Integer.parseInt(choice.nextLine());
+                if(this.amount <= 1000 && this.amount > 0) {
                     break;
                 }else{
                     System.out.print("Number not recognized or out of range, please try again: ");

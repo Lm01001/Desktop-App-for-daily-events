@@ -8,8 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public class Calendar extends Occurrence {
-
-    String date = choice.nextLine();
+    //String date = choice.nextLine();
     LocalDate chosenDate;
 
     public Calendar(String date, int priority,
@@ -32,13 +31,11 @@ public class Calendar extends Occurrence {
         }
     }
 
-    int priority = choice.nextInt();
     @Override
     public void setPriority(int priority) {     //Setting priority of certain event
         super.setPriority(priority);
     }
 
-    String name = choice.nextLine();
     @Override
     public void setName(String name) {      //Setting name of the event
         super.setName(name);

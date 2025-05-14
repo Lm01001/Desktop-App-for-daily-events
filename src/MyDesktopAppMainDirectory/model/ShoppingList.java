@@ -6,35 +6,70 @@ import org.javatuples.Quartet;
 import java.util.HashMap;
 
 public class ShoppingList extends Product {
-    int index = 0;
-    int decision = 1;
-    int productsIndex = 0;
-    public static boolean bought = false;
-    public static Quartet<Integer, String, Integer, String> product =
-            Quartet.with(List.priority, List.name, Product.amount, "To buy");
-    public static HashMap<Integer, Quartet<Integer, String, Integer, String>>finalProduct = new HashMap<>();
+    private int index = 0;
+    public int getIndex() {
+        return index;
+    }
+    public void setIndex(int index) {
+        this.index = index;
+    }
 
-    public ShoppingList(int priority, String name, int amount, boolean bought) {
+    private int productsIndex = 0;
+    public int getProductsIndex() {
+        return productsIndex++;
+    }
+    public void setProductsIndex(int productsIndex) {
+        this.productsIndex = productsIndex;
+    }
+
+    private boolean bought = false;
+    public boolean getBought() {
+        return bought;
+    }
+    public void setBought(boolean bought) {
+            this.bought = bought;
+    }
+
+    private String status = "To buy";
+    public String getStatus() {
+        return status;
+    }
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    private static record Quartet(Integer priority, String name, Integer amount, boolean bought) {};
+    private Quartet quartetCreator(Integer priority, String name, Integer amount, boolean bought) {
+        return new Quartet(priority , name, amount, this.bought);
+    }
+
+    private final HashMap<Integer, Quartet> finalProduct = new HashMap<>();
+    public void addHashMapValue() {
+        Quartet product = quartetCreator(getPriority(), getName(), getAmount(), bought);
+        finalProduct.put(getProductsIndex(), product);
+    }
+
+    public ShoppingList(int priority, String name, int amount, String status, int index) {
         super(priority, name, amount);
-        ShoppingList.bought = bought;
+        this.status = status;
+        this.index = index;
     }
 
     public void addProduct() {
-    for(int i = 0; i <3 ; i++) {
         Scanner scanner = new Scanner(System.in);
-        super.setPriority(priority);
-        product = product.setAt0(priority);
-        super.setName(name);
-        product = product.setAt1(name);
-        super.setAmount(amount);
-        product = product.setAt2(amount);
-        ShoppingList newProduct = new ShoppingList(priority, name, amount, bought);
-        if (bought) {
-            product = product.setAt3("Bought");
+        super.setPriority(getPriority());
+        super.setName(getName());
+        super.setAmount(getAmount());
+        if (getBought()) {
+            setStatus("Bought");
+            addHashMapValue();
+            ShoppingList sl = new ShoppingList(getPriority(), getName(), getAmount(), status, index);
+            setBought(false);
+            setStatus("To buy");
+        } else {
+            addHashMapValue();
+            ShoppingList sl = new ShoppingList(getPriority(), getName(), getAmount(), status, index);
         }
-        finalProduct.put(index++, product);
-        //System.out.println(product);
-    }
     }
 
     public void deleteItem() {      //Deleting unwanted item
@@ -61,9 +96,12 @@ public class ShoppingList extends Product {
             try{
                 this.productsIndex = Integer.parseInt(choice.nextLine());
                 if(finalProduct.containsKey(productsIndex)){
-                    product = finalProduct.get(productsIndex);
-                    product = product.setAt3("Bought");
-                    finalProduct.put(productsIndex, product);
+                    setBought(true);
+                    setStatus("Bought");
+                    finalProduct.put(productsIndex, quartetCreator(getPriority(), getName(), getAmount(), bought));
+                    ShoppingList sl = new ShoppingList(getPriority(), getName(), getAmount(), status, productsIndex);
+                    setBought(false);
+                    setStatus("To buy");
                     break;
                 }else{
                     System.out.println("Index not found. Please enter a valid number.");
