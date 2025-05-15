@@ -38,6 +38,22 @@ public class ShoppingList extends Product {
         this.status = status;
     }
 
+    private String decision = "no";
+    public String getDecision() {
+        return decision;
+    }
+    public void setDecision(String decision) {
+        this.decision = decision;
+    }
+
+    private String answer = "";
+    public String getAnswer() {
+        return answer;
+    }
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+
     private static record Quartet(Integer priority, String name, Integer amount, boolean bought) {};
     private Quartet quartetCreator(Integer priority, String name, Integer amount, boolean bought) {
         return new Quartet(priority , name, amount, this.bought);
@@ -56,22 +72,31 @@ public class ShoppingList extends Product {
         this.index = index;
     }
 
-    public void addProduct() {
-        Scanner scanner = new Scanner(System.in);
+    //No-argument constructor to initialize an object in Db class avoiding NullPointerException
+    public ShoppingList() {
+        super(0, "Default name", 0);
+        this.status = "Default status";
+        this.index = 0;
+    }
+
+    public ShoppingList addProduct() {
         super.setPriority(getPriority());
         super.setName(getName());
         super.setAmount(getAmount());
+        ShoppingList shoppingList;
         if (getBought()) {
             setStatus("Bought");
             addHashMapValue();
-            ShoppingList sl = new ShoppingList(getPriority(), getName(), getAmount(), status, index);
+            shoppingList = new ShoppingList(getPriority(), getName(), getAmount(), status, index);
             setProductsIndex(getProductsIndex() + 1);
             setBought(false);
             setStatus("To buy");
         } else {
             addHashMapValue();
-            ShoppingList sl = new ShoppingList(getPriority(), getName(), getAmount(), status, index);
+            shoppingList = new ShoppingList(getPriority(), getName(), getAmount(), status, index);
+            setProductsIndex(getProductsIndex() + 1);
         }
+        return shoppingList;
     }
 
     public void deleteItem() {      //Deleting unwanted item
@@ -111,6 +136,17 @@ public class ShoppingList extends Product {
             }catch(NumberFormatException e){
                     System.out.println("Value not recognized. Please enter a valid number.");
             }
+        }
+    }
+
+    public String ifStillInProgress() {
+        System.out.println("Do You want to add another product?");
+        answer = choice.nextLine();
+        decision = answer.substring(0,2).toLowerCase();
+        if(decision.equals("yes")){
+           return "yes";
+        } else {
+            return "no";
         }
     }
 }

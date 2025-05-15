@@ -14,6 +14,12 @@ public class Product extends List {
         this.amount = amount;
     }
 
+    //Extra no-argument constructor as a helper for ShoppingList inside Db class
+    public Product() {
+        super(0, "Default name");
+        this.amount = 0;
+    }
+
     public void setAmount(int amount) {       //Choosing amount/number to buy for each item
         while(true){
             System.out.println("Please choose quantity of products you want to add (max up to 1000): ");

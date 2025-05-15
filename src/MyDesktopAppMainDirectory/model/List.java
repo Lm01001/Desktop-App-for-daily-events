@@ -3,7 +3,6 @@ import MyDesktopAppMainDirectory.model.Event;
 import java.util.Scanner;
 
 public class List implements Event {
-
     Scanner choice = new Scanner(System.in);
     private String name = "Default name";
     public String getName() {
@@ -18,6 +17,12 @@ public class List implements Event {
     public List(int priority, String name) {     //List's constructor
         this.priority = priority;
         this.name = name;
+    }
+
+    //Extra no-argument constructor as a helper for ShoppingList inside Db class
+    public List() {
+        this.priority = 0;
+        this.name = "Default name";
     }
 
     @Override

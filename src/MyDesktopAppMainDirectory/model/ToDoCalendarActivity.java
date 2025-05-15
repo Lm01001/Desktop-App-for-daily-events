@@ -65,6 +65,7 @@ public class ToDoCalendarActivity extends Calendar {
         this.dutifully = dutifully;
         this.howImportant = howImportant;
     }
+
     public int usersChoice = 0;
     public void isMandatory() {
         while(true) {
