@@ -138,15 +138,4 @@ public class ShoppingList extends Product {
             }
         }
     }
-
-    public String ifStillInProgress() {
-        System.out.println("Do You want to add another product?");
-        answer = choice.nextLine();
-        decision = answer.substring(0,2).toLowerCase();
-        if(decision.equals("yes")){
-           return "yes";
-        } else {
-            return "no";
-        }
-    }
 }

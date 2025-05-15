@@ -24,6 +24,13 @@ public class Calendar extends Occurrence {
         this.dayOfTheWeek = dayOfTheWeek;
     }
 
+    //No-argument constructor to use in Db class to initialize default class object
+    public Calendar() {
+        super(0, "Default name");
+        this.chosenDate = "";
+        this.dayOfTheWeek = DayOfWeek.SATURDAY;
+    }
+
     public void setDate(String chosenDate) {
         while(true) {
             System.out.print("Choose a date for the action You'd like to create. ");

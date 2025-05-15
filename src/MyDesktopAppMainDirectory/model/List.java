@@ -14,12 +14,28 @@ public class List implements Event {
         return priority;
     }
 
+    private String decision = "no";
+    public String getDecision() {
+        return decision;
+    }
+    public void setDecision(String decision) {
+        this.decision = decision;
+    }
+
+    private String answer = "";
+    public String getAnswer() {
+        return answer;
+    }
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+
     public List(int priority, String name) {     //List's constructor
         this.priority = priority;
         this.name = name;
     }
 
-    //Extra no-argument constructor as a helper for ShoppingList inside Db class
+    //Extra no-argument constructor as a helper for ShoppingList, Task inside Db class
     public List() {
         this.priority = 0;
         this.name = "Default name";
@@ -48,6 +64,18 @@ public class List implements Event {
             }catch(NumberFormatException e){
                 System.out.println("Choice not recognized. Please enter a valid number.");
             }
+        }
+    }
+
+    @Override
+    public String ifStillInProgress() {
+        System.out.println("Do You want to add another item/position?");
+        setAnswer(choice.nextLine().trim().toLowerCase());
+        setDecision(getAnswer().substring(0,2));
+        if(getDecision().equals("yes") || getDecision().startsWith("y")){
+            return "yes";
+        } else {
+            return "no";
         }
     }
 }

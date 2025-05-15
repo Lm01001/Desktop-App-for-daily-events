@@ -7,11 +7,14 @@ import org.javatuples.Quartet;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import com.google.gson.Gson;
+import org.bson.Document;
 
 public class MongoDBService {
     private final MongoClient mongoClient;
     private final MongoDatabase database;
     private final MongoCollection<Document> collection;
+
     private int shoppingListId = 1;
     public int getShoppingListId() {
         return shoppingListId;
@@ -36,6 +39,22 @@ public class MongoDBService {
         this.calendarId = calendarId;
     }
 
+    private String category = "";
+    public String getCategory() {
+        return category;
+    }
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    private String arrayAccessKey = "";
+    public String getArrayAccessKey() {
+        return arrayAccessKey;
+    }
+    public void setArrayAccessKey(String arrayAccessKey) {
+        this.arrayAccessKey = arrayAccessKey;
+    }
+
     public MongoDBService(String dbName, String collectionName) {
         this.mongoClient = MongoClients.create("mongodb://localhost:27017");
         this.database = mongoClient.getDatabase(dbName);
@@ -43,7 +62,7 @@ public class MongoDBService {
     }
 
     public void insertShoppingList() {
-        Document mainDocWithAShoppingList = new Document("category", "Shopping List")
+        Document mainDocWithAShoppingList = new Document("category", "shopping List")
                 .append("index", getShoppingListId());
         List<Document> arrayForShoppingLists = new ArrayList<>();
 
@@ -51,7 +70,7 @@ public class MongoDBService {
         while(addingInProgress) {
             ShoppingList shoppinglist = new ShoppingList();
             shoppinglist.addProduct();
-            Document newShoppingList = new Document("category: ", "Shopping List").append("index: ", shoppinglist.getIndex()).append("product: ",
+            Document newShoppingList = new Document("category: ", "shopping List").append("index: ", shoppinglist.getIndex()).append("product: ",
                         shoppinglist.getName()).append("amount: ", shoppinglist.getAmount()).append("priority: ", shoppinglist.getPriority()).
                         append("status: ", shoppinglist.getStatus());
             arrayForShoppingLists.add(newShoppingList);
@@ -65,15 +84,21 @@ public class MongoDBService {
     }
 
     public void insertCalendarEvent(List<ToDoCalendarActivity> calendarActivities) {
-        Document mainDocWithACalendarPage = new Document("category", "Calendar event")
+        Document mainDocWithACalendarPage = new Document("category", "calendar event")
                 .append("index", getCalendarId());
         List<Document> arrayForCalendarPages = new ArrayList<>();
 
-        for(ToDoCalendarActivity calendar : calendarActivities) {
-            Document newEventInCalendar = new Document("category", "Calendar event").append("index", calendar.getIndex()).
+        boolean addingInProgress = true;
+        while(addingInProgress) {
+            ToDoCalendarActivity calendar = new ToDoCalendarActivity();
+            calendar.createAction();
+            Document newEventInCalendar = new Document("category", "calendar event").append("index", calendar.getIndex()).
                     append("date", calendar.getChosenDate()).append("day", calendar.getDayOfTheWeek()).append("task", calendar.getName()).
                     append("importance", calendar.getHowImportant()).append("obligatory", calendar.getDutifully());
             arrayForCalendarPages.add(newEventInCalendar);
+            if(!calendar.ifStillInProgress().equals("yes")) {
+                addingInProgress = false;
+            }
         }
         mainDocWithACalendarPage.append("pages", arrayForCalendarPages);
         collection.insertOne(mainDocWithACalendarPage);
@@ -81,40 +106,95 @@ public class MongoDBService {
     }
 
     public void insertTask(List<Task> tasks) {
-        Document mainDocWithATask = new Document("category", "Task")
+        Document mainDocWithATask = new Document("category", "task")
                 .append("index", getTaskId());
         List<Document> arrayForTasks = new ArrayList<>();
-        for(Task task : tasks) {
-            Document newTask = new Document("category", "Task").append("time", task.getChosenTime()).append("index", task.getIndex()).
+
+        boolean addingInProgress = true;
+        while(addingInProgress) {
+            Task task = new Task();
+            task.createTask();
+            Document newTask = new Document("category", "task").append("time", task.getChosenTime()).append("index", task.getIndex()).
                     append("name", task.getName()).append("importance", task.getHowImportant()).append("status", task.getStatus());
             arrayForTasks.add(newTask);
+            if(!task.ifStillInProgress().equals("yes")) {
+                addingInProgress = false;
+            }
         }
         mainDocWithATask.append("tasks", arrayForTasks);
         collection.insertOne(mainDocWithATask);
         setTaskId(getTaskId() + 1);
     }
 
-    /*public FindIterable<Document> findAllDocuments() {
-        // implement find all logic
-        return collection.find();
+    //Instance of Gson class from Gson library, used to convert between Java objects and JSON Strings
+    Gson gson = new Gson();
+
+    //Generic method it(<T>) can return T here based on passed entityType
+    private <T> T convertToEntity(Document doc, Class<T> entityType) {
+        String json = doc.toJson();
+        return gson.fromJson(json, entityType);
     }
 
-    public Document findByField(String field, Object value) {
-        // implement filter logic
-        return collection.find(Filters.eq(field, value)).first();
+    public <T> List<T> findAll(Class<T> entityType) {
+        List<T> results = new ArrayList<>();
+
+        if(entityType.equals(Task.class)) {
+            setCategory("task");
+            setArrayAccessKey("tasks");
+        } else if(entityType.equals(ShoppingList.class)) {
+            setCategory("shopping List");
+            setArrayAccessKey("shoppingLists");
+        } else if(entityType.equals(ToDoCalendarActivity.class)) {
+            setCategory("calendar event");
+            setArrayAccessKey("pages");
+        } else {
+            throw new IllegalArgumentException("Unsupported entity type: " +
+                    entityType.getName());
+        }
+
+        FindIterable<Document> docs = collection.find(Filters.
+                eq("category", getCategory()));
+
+        for(Document document : docs) {
+        //To hide a warning about the unchecked cast
+            @SuppressWarnings("unchecked")
+            List<Document> docsInsideAnArray = (List<Document>) document.get(getArrayAccessKey());
+            if(docsInsideAnArray != null) {
+                for(Document docsInside : docsInsideAnArray) {
+                    T object = convertToEntity(docsInside, entityType);
+                    results.add(object);
+                }
+            }
+        }
+        return results;
     }
 
-    public void updateDocument(Bson filter, Bson update) {
-        // implement update logic
-        //collection.updateOne(filter, update);
+    /*public <T>  T findById(Class<T> entityType, int id) {
+        if(entityType.equals(Task.class)) {
+            setCategory("task");
+            setArrayAccessKey("tasks");
+        } else if(entityType.equals(ShoppingList.class)) {
+            setCategory("shopping List");
+            setArrayAccessKey("shoppingLists");
+        } else if(entityType.equals(ToDoCalendarActivity.class)) {
+            setCategory("calendar event");
+            setArrayAccessKey("pages");
+        } else {
+            throw new IllegalArgumentException("Unsupported entity type: " +
+                    entityType.getName());
+        }
+
     }
 
-    public void deleteDocument(Bson filter) {
-        // implement delete logic
-        collection.deleteOne(filter);
-    }*/
+    public <T> void deletePosition(Class<T> entityType, int id) {
+
+    }
+
+    public <T> void editPosition(Class<T> entityType, int id) {
+
+    }
 
     public void close() {
         mongoClient.close();
-    }
+    }*/
 }

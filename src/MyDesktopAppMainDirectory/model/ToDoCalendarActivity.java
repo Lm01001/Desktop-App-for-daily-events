@@ -1,8 +1,6 @@
 package MyDesktopAppMainDirectory.model;
 import org.javatuples.Quartet;
-
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.util.HashMap;
 
 public class ToDoCalendarActivity extends Calendar {
@@ -66,6 +64,14 @@ public class ToDoCalendarActivity extends Calendar {
         this.howImportant = howImportant;
     }
 
+    //No-argument constructor to initialize an object in Db class avoiding NullPointerException
+    public ToDoCalendarActivity() {
+        super(0, "Default name", "", DayOfWeek.SATURDAY);
+        this.index = 0;
+        this.dutifully = "Default";
+        this.howImportant = "Default";
+    }
+
     public int usersChoice = 0;
     public void isMandatory() {
         while(true) {
@@ -97,8 +103,5 @@ public class ToDoCalendarActivity extends Calendar {
         addHashMapValue();
         return new ToDoCalendarActivity(getPriority(), getName(), getChosenDate(),
                 getDayOfTheWeek(), getIndex(), getDutifully(), getHowImportant());
-        /*System.out.println(activity);
-        System.out.println(todo.getPriority() + " " + todo.getName()+ " " + todo.getChosenDate()+ " " +
-                todo.getDayOfTheWeek()+ " " +todo.getIndex()+ " " +todo.getDutifully()+ " " + todo.getHowImportant());*/
     }
 }

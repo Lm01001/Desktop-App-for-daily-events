@@ -103,6 +103,13 @@ public class Task extends List {
         this.status = status;
     }
 
+    public Task() {
+        super(0, "Default name");
+        this.index = 0;
+        this.howImportant = "Default";
+        this.status = "Default";
+    }
+
     //Choosing task's time, default time is equal to current time
     public void setTasksTime() {
         System.out.println("Please set the time of the task you want to add.");
@@ -179,7 +186,7 @@ public class Task extends List {
     }
 
     //Showing already existing tasks before adding them to the db
-    public void showExistingTasks() {
+    public void showActiveTasks() {
         int taskIndex = 0;
         if(tasks.isEmpty()) {
             System.out.println("There are no tasks in the database.");
