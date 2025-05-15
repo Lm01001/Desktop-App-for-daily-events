@@ -88,13 +88,13 @@ public class ToDoCalendarActivity extends Calendar {
         }
     }
 
-    public void createAction() {
+    public ToDoCalendarActivity createAction() {
         super.setName(getName());
         super.setPriority(getPriority());
         super.setDate(getChosenDate());
         isMandatory();
         addHashMapValue();
-        ToDoCalendarActivity todo = new ToDoCalendarActivity(getPriority(), getName(), getChosenDate(),
+        return new ToDoCalendarActivity(getPriority(), getName(), getChosenDate(),
                 getDayOfTheWeek(), getIndex(), getDutifully(), getHowImportant());
         /*System.out.println(activity);
         System.out.println(todo.getPriority() + " " + todo.getName()+ " " + todo.getChosenDate()+ " " +

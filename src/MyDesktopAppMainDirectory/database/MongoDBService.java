@@ -21,12 +21,15 @@ public class MongoDBService {
                         append("status: ", shoppinglist.getStatus());
     }
 
-   /* public void insertCalendarEvent(Calendar calendar) {
-        Document newDocument = new Document("category: ", "Calendar event").append("index");
+    public void insertCalendarEvent(ToDoCalendarActivity calendar) {
+        Document newDocument = new Document("category: ", "Calendar event").append("index", calendar.getIndex()).
+                append("Date: ", calendar.getChosenDate()).append("Day: ", calendar.getDayOfTheWeek()).append("Task: ", calendar.getName()).
+                append("Importance: ", calendar.getHowImportant()).append("Obligatory? ", calendar.getDutifully());
     }
 
     public void insertTask(Task task) {
-
+        Document newDocument = new Document("category: ", "Task").append("Time: ", task.getChosenTime()). append("Index: ", task.getIndex()).
+                append("Name: ", task.getName()).append("Importance: ", task.getHowImportant()).append("Status: ", task.getStatus());
     }
 
     /*public FindIterable<Document> findAllDocuments() {
