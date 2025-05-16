@@ -78,4 +78,9 @@ public class Occurrence implements Event {
             return "no";
         }
     }
+
+    @Override
+    public int getIndex() {
+        return 1;
+    }
 }

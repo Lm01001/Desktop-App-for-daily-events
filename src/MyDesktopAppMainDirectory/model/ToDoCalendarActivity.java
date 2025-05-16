@@ -25,6 +25,7 @@ public class ToDoCalendarActivity extends Calendar {
     }
 
     private int index = 0;
+    @Override
     public int getIndex() {
         return index;
     }

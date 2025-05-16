@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 public class ShoppingList extends Product {
     private int index = 0;
+    @Override
     public int getIndex() {
         return index;
     }
@@ -89,12 +90,14 @@ public class ShoppingList extends Product {
             addHashMapValue();
             shoppingList = new ShoppingList(getPriority(), getName(), getAmount(), status, index);
             setProductsIndex(getProductsIndex() + 1);
+            setIndex(getIndex() + 1);
             setBought(false);
             setStatus("To buy");
         } else {
             addHashMapValue();
             shoppingList = new ShoppingList(getPriority(), getName(), getAmount(), status, index);
             setProductsIndex(getProductsIndex() + 1);
+            setIndex(getIndex() + 1);
         }
         return shoppingList;
     }

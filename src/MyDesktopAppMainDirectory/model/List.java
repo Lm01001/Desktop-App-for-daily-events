@@ -78,4 +78,9 @@ public class List implements Event {
             return "no";
         }
     }
+
+    @Override
+    public int getIndex() {
+        return 1;
+    }
 }

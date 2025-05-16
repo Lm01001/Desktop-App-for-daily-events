@@ -2,7 +2,9 @@ package MyDesktopAppMainDirectory.database;
 import MyDesktopAppMainDirectory.model.*;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.javatuples.Quartet;
 import java.util.List;
 import java.util.ArrayList;
@@ -70,9 +72,9 @@ public class MongoDBService {
         while(addingInProgress) {
             ShoppingList shoppinglist = new ShoppingList();
             shoppinglist.addProduct();
-            Document newShoppingList = new Document("category: ", "shopping List").append("index: ", shoppinglist.getIndex()).append("product: ",
-                        shoppinglist.getName()).append("amount: ", shoppinglist.getAmount()).append("priority: ", shoppinglist.getPriority()).
-                        append("status: ", shoppinglist.getStatus());
+            Document newShoppingList = new Document("category", "shopping List").append("index", shoppinglist.getIndex()).append("product",
+                        shoppinglist.getName()).append("amount: ", shoppinglist.getAmount()).append("priority", shoppinglist.getPriority()).
+                        append("status", shoppinglist.getStatus());
             arrayForShoppingLists.add(newShoppingList);
             if(!shoppinglist.ifStillInProgress().equals("yes")) {
                 addingInProgress = false;
@@ -169,7 +171,8 @@ public class MongoDBService {
         return results;
     }
 
-    /*public <T>  T findById(Class<T> entityType, int id) {
+    public <T extends Event>  T findById(Class<T> entityType, int id) {
+        List<T> allResults = new ArrayList<>();
         if(entityType.equals(Task.class)) {
             setCategory("task");
             setArrayAccessKey("tasks");
@@ -183,14 +186,64 @@ public class MongoDBService {
             throw new IllegalArgumentException("Unsupported entity type: " +
                     entityType.getName());
         }
+        FindIterable<Document> docs = collection.find(Filters.
+                eq("category", getCategory()));
 
+        for(Document document : docs) {
+            //To hide a warning about the unchecked cast
+            @SuppressWarnings("unchecked")
+            List<Document> docsInsideAnArray = (List<Document>) document.get(getArrayAccessKey());
+            if(docsInsideAnArray != null) {
+                for(Document docsInside : docsInsideAnArray) {
+                    T object = convertToEntity(docsInside, entityType);
+                    allResults.add(object);
+                }
+            }
+        }
+        for(T object : allResults) {
+            if(object.getIndex() == id) {
+                return object;
+            }
+        }
+        return null;
     }
 
-    public <T> void deletePosition(Class<T> entityType, int id) {
+    public <T extends Event> void deletePosition(Class<T> entityType, int id) {
+        List<T> allResults = new ArrayList<>();
+        if(entityType.equals(Task.class)) {
+            setCategory("task");
+            setArrayAccessKey("tasks");
+        } else if(entityType.equals(ShoppingList.class)) {
+            setCategory("shopping List");
+            setArrayAccessKey("shoppingLists");
+        } else if(entityType.equals(ToDoCalendarActivity.class)) {
+            setCategory("calendar event");
+            setArrayAccessKey("pages");
+        } else {
+            throw new IllegalArgumentException("Unsupported entity type: " +
+                    entityType.getName());
+        }
+        FindIterable<Document> docs = collection.find(Filters.
+                eq("category", getCategory()));
 
+        for(Document document : docs) {
+            //To hide a warning about the unchecked cast
+            @SuppressWarnings("unchecked")
+            List<Document> docsInsideAnArray = (List<Document>) document.get(getArrayAccessKey());
+            if(docsInsideAnArray != null) {
+                for(Document docsInside : docsInsideAnArray) {
+                    if(docsInside.getInteger("index", -1) == id) {
+                        Bson filter = Filters.eq("_id", document.getObjectId("_id"));
+                        Bson update = Updates.pull(getArrayAccessKey(), Filters.eq("index", id));
+                        collection.updateOne(filter, update);
+                        return;
+                    }
+                }
+            }
+        }
     }
 
-    public <T> void editPosition(Class<T> entityType, int id) {
+    /*public <T> void editPosition(Class<T> entityType, int id) {
 
     }
 
