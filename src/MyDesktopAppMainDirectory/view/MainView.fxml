@@ -4,6 +4,7 @@
 <VBox prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="MyDesktopAppMainDirectory.Preview">
 
+    <Label text="Daily Events" />
     <Button text="Calendar" fx:id="calendarButton"/>
     <Button text="Calendar" fx:id="tasksButton"/>
     <Button text="Calendar" fx:id="exitButton"/>

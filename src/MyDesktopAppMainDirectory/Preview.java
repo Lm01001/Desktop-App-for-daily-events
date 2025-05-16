@@ -9,6 +9,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -92,7 +94,16 @@ public class Preview extends Application  {
     public void start(Stage stage) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
                 ("/MyDesktopAppMainDirectory/view/MainView.fxml")));
-
+        Pane layout = new Pane();
+        stage.setTitle("creating label");
+        Label name = new Label("Daily tasks");
+        name.setLayoutX(310);
+        name.setLayoutY(60);
+        name.setMinWidth(100);
+        name.setMinHeight(80);
+        name.setStyle("-fx-font: 36 arial");
+        //name.setStyle("-fx-font-weight: bold");
+        layout.getChildren().add(name);
 
 
         exitButton = new Button();
@@ -100,6 +111,7 @@ public class Preview extends Application  {
         exitButton.setOnAction(e -> {
             Platform.exit();
         });
+
 
         exportButton = new Button();
         exportButton.setText("Export data");
@@ -156,8 +168,22 @@ public class Preview extends Application  {
             stage.show();
         });
 
-        StackPane layout = new StackPane();
+        calendarButton.setLayoutX(625);
+        calendarButton.setLayoutY(500);
         layout.getChildren().add(calendarButton);
+
+        exitButton.setLayoutX(750);
+        exitButton.setLayoutY(10);
+        layout.getChildren().add(exitButton);
+
+        tasksButton.setLayoutX(100);
+        tasksButton.setLayoutY(500);
+        layout.getChildren().add(tasksButton);
+
+        shoppingListButton.setLayoutX(350);
+        shoppingListButton.setLayoutY(500);
+        layout.getChildren().add(shoppingListButton);
+
         stage.setTitle("Desktop App");
         Scene defaultScene = new Scene(layout, 800, 600); // layout changed from root
         stage.setScene(defaultScene);
