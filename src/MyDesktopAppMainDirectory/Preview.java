@@ -1,8 +1,10 @@
 package MyDesktopAppMainDirectory;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -10,17 +12,21 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Objects;
+
+import static javafx.application.Application.launch;
 
 
 public class Preview extends Application  {
-    Button button, button2;
-    @Override
-    public void start(Stage stage) throws Exception{
-        /*Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
-                ("/MyDesktopAppMainDirectory/view/MainView.fxml")));
-*/
+    @FXML
+    Button exitButton, exportButton, shoppingListButton, calendarButton, tasksButton;
 
+    /*@Override
+    public void start(Stage stage) throws Exception{
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
+                ("/MyDesktopAppMainDirectory/view/MainView.fxml")));
         button = new Button();
         button.setText("first button");
         button2 = new Button();
@@ -32,7 +38,7 @@ public class Preview extends Application  {
         //      button.setOnAction(this);
         //inna opcja, usuwamy to implements eventhandler, inner class
         //implements EventHandler<ActionEvent>
-        /*button.setOnAction(new EventHandler<ActionEvent>(){
+        button.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent actionEvent) {
                  //bez potrzeby tego w () przy if bo przypisane do przycisku
@@ -41,7 +47,7 @@ public class Preview extends Application  {
                 System.out.println("Button pressed. akcja ktora ma miejsca po nacisnieciu");
             }
         });
-         */
+
 
 
         //lambda expressions, e reprezentuje event
@@ -59,17 +65,10 @@ public class Preview extends Application  {
         layout.getChildren().add(button);
         layout2.getChildren().add(button2);
 
-
-
-
-
         button2.setOnAction(e -> {
             System.out.println("Button pressed. scene2");
             System.out.println("Button pressed. again");
         });
-
-
-
         //tytul okna
         stage.setTitle("Desktop App");
         Scene scene1, scene2;
@@ -79,8 +78,7 @@ public class Preview extends Application  {
         stage.setScene(scene1);
         stage.show();
     }
-
-    /*@Override
+    @Override
     public void handle(ActionEvent actionEvent) {
         if(actionEvent.getSource()==button1) {
             //Akcja widoczna tylko dla mnie w terminalu
@@ -89,7 +87,86 @@ public class Preview extends Application  {
         }
     }*/
 
+
+    @Override
+    public void start(Stage stage) throws IOException {
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
+                ("/MyDesktopAppMainDirectory/view/MainView.fxml")));
+
+
+
+        exitButton = new Button();
+        exitButton.setText("Exit");
+        exitButton.setOnAction(e -> {
+            Platform.exit();
+        });
+
+        exportButton = new Button();
+        exportButton.setText("Export data");
+        exportButton.setOnAction(e -> {
+
+        });
+
+
+        shoppingListButton = new Button();
+        shoppingListButton.setText("Shopping List");
+        shoppingListButton.setOnAction(e -> {
+            try {
+                Parent root2 = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
+                        ("/MyDesktopAppMainDirectory/view/ShoppingListView.fxml")));
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+
+        });
+
+
+        tasksButton = new Button();
+        tasksButton.setText("Tasks");
+        tasksButton.setOnAction(e -> {
+            try {
+                Parent root2 = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
+                        ("/MyDesktopAppMainDirectory/view/TaskView.fxml")));
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+
+        calendarButton = new Button();
+        calendarButton.setText("Calendar");
+        calendarButton.setOnAction(e -> {
+            try {
+                Parent root2 = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
+                        ("/MyDesktopAppMainDirectory/view/CalendarView.fxml")));
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            URL fxmlUrl = getClass().getResource("/MyDesktopAppMainDirectory/view/CalendarView.fxml");
+            if(fxmlUrl == null)
+                throw new IllegalStateException("FXML file not found!");
+            Scene scene = null;
+            try {
+                scene = new Scene(FXMLLoader.load(fxmlUrl));
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            stage.setTitle("Calendar");
+            stage.setScene(scene);
+            stage.show();
+        });
+
+        StackPane layout = new StackPane();
+        layout.getChildren().add(calendarButton);
+        stage.setTitle("Desktop App");
+        Scene defaultScene = new Scene(layout, 800, 600); // layout changed from root
+        stage.setScene(defaultScene);
+        stage.show();
+    }
+
+
     public static void main(String[] args) {
         launch(args);
     }
 }
+
