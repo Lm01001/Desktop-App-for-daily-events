@@ -1,5 +1,6 @@
 package MyDesktopAppMainDirectory;
 
+import MyDesktopAppMainDirectory.database.MongoDBService;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -25,6 +26,10 @@ public class Preview extends Application  {
     @FXML
     Button exitButton, exportButton, shoppingListButton, calendarButton, tasksButton;
 
+    @FXML
+    Button insertCalendarEvent, insertTask, insertShoppingList, findAll, finById, deletePosition, editPosition;
+
+    MongoDBService mongoDBService;
     /*@Override
     public void start(Stage stage) throws Exception{
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
@@ -146,7 +151,9 @@ public class Preview extends Application  {
 
 
         calendarButton = new Button();
+        insertCalendarEvent = new Button();
         calendarButton.setText("Calendar");
+        insertCalendarEvent.setText("+");
         calendarButton.setOnAction(e -> {
             try {
                 Parent root2 = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
@@ -167,6 +174,7 @@ public class Preview extends Application  {
             stage.setScene(scene);
             stage.show();
         });
+        //insertCalendarEvent.setOnAction(e -> mongoDBService.insertCalendarEvent());
 
         calendarButton.setLayoutX(625);
         calendarButton.setLayoutY(500);

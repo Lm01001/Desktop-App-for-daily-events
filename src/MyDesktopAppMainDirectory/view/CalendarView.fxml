@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Button?>
 <?import javafx.geometry.Insets?>
@@ -34,20 +33,21 @@
                 <Button mnemonicParsing="false" onAction="#forwardOneMonth" text="&gt;" />
             </children>
         </HBox>
-        <HBox alignment="CENTER" layoutX="14.0" layoutY="78.0" prefHeight="44.0" prefWidth="716.0" spacing="88.75">
+        <HBox alignment="CENTER" layoutX="30.0" layoutY="78.0" prefHeight="44.0" prefWidth="716.0" spacing="88.75">  <!-- ustawienie nazw dni do poprawy!!!!!!-->
             <children>
-                <Text layoutX="213.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mo" textAlignment="CENTER" />
-                <Text layoutX="222.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tu" textAlignment="CENTER" />
-                <Text layoutX="232.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="We" textAlignment="CENTER" />
-                <Text layoutX="241.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Th" textAlignment="CENTER" />
-                <Text layoutX="251.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Fr" textAlignment="CENTER" />
-                <Text layoutX="266.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sa" textAlignment="CENTER" />
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Su" textAlignment="CENTER" />
+                <Text layoutX="213.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mon" textAlignment="CENTER" />
+                <Text layoutX="222.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tue" textAlignment="CENTER" />
+                <Text layoutX="232.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Wed" textAlignment="CENTER" />
+                <Text layoutX="241.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Thu" textAlignment="CENTER" />
+                <Text layoutX="251.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Fri" textAlignment="CENTER" />
+                <Text layoutX="266.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sat" textAlignment="CENTER" />
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Sun" textAlignment="CENTER" />
             </children>
             <padding>
                 <Insets right="9.0" />
             </padding>
         </HBox>
+        <Button fx:id="createEvent" text="+" onAction="#onAddClicked"/>  -->
     </AnchorPane>
 
 <!-- </VBox> -->
