@@ -14,8 +14,11 @@
 
       <Button fx:id="addButton" text="Add" onAction="#onAddClicked"/>  -->
 
-    <AnchorPane prefHeight="642.0" prefWidth="744.0" style="-fx-background-color: #f2fafc;" xmlns="http://javafx.com/javafx/15.0.1"
-                xmlns:fx="http://javafx.com/fxml/1" fx:controller="MyDesktopAppMainDirectory.controller.CalendarController">
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.Label?>
+<AnchorPane prefHeight="642.0" prefWidth="744.0" style="-fx-background-color: #f2fafc;" xmlns="http://javafx.com/javafx/15.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="MyDesktopAppMainDirectory.controller.CalendarController">
         <FlowPane fx:id="calendar" hgap="10.0" layoutX="14.0" layoutY="116.0" prefHeight="498.0" prefWidth="716.0" vgap="5.0" />
         <HBox alignment="CENTER" layoutX="163.0" layoutY="14.0" prefHeight="44.0" prefWidth="419.0" spacing="5.0">
             <children>
@@ -47,7 +50,17 @@
                 <Insets right="9.0" />
             </padding>
         </HBox>
-        <Button fx:id="createEvent" text="+" onAction="#onAddClicked"/>  -->
+        <HBox layoutX="20.0" layoutY="28.0" prefHeight="44.0">
+            <Button fx:id="returnButton" text="Return" onAction="#returnButton"/>
+        </HBox>
+        <HBox layoutX="700.0" layoutY="28.0" prefHeight="44.0" prefWidth="44.0">
+            <children>
+                <Button fx:id="insertCalendarEvent" text="+" onAction="#insertCalendarEvent"/>
+                <!-- <DatePicker fx:id="datePick" onAction="#InsertingOnPlusClicked" promptText="Enter events date" prefWidth="600.0" layoutX="800.0" layoutY="300.0"/>
+                <Label fx:id="datesLabel" alignment="CENTER_RIGHT" prefWidth="600.0" prefHeight="44.0" /> -->
+            </children>
+        </HBox>
+       <!-- <Button fx:id="createEvent" text="+" onAction="#onAddClicked"/>  -->
     </AnchorPane>
 
 <!-- </VBox> -->

@@ -1,6 +1,8 @@
 package MyDesktopAppMainDirectory.model;
 import java.time.LocalDate;
 import java.time.DayOfWeek;
+import java.time.ZonedDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
@@ -9,19 +11,41 @@ public class Calendar extends Occurrence {
     public String getChosenDate() {
         return chosenDate;
     }
+    private ZonedDateTime chosenDateTime;
+    private ZonedDateTime parseChosenDateTime(String dateString) {
+        if(dateString == null || dateString.isEmpty())
+            return null;
+        try {
+            if(dateString.charAt(2) == '-' && dateString.charAt(5) == '-') {
+                LocalDate ld = LocalDate.parse(dateString, formatterForDateDashes);
+                return ld.atStartOfDay(ZoneId.systemDefault());
+            } else if(dateString.charAt(2) == '.' && dateString.charAt(5) == '.') {
+                LocalDate ld = LocalDate.parse(dateString, formatterForDateDots);
+                return ld.atStartOfDay(ZoneId.systemDefault());
+            }
+        } catch(DateTimeParseException e) {
+            return null;
+        }
+        return null;
+    }
 
     private DayOfWeek dayOfTheWeek = LocalDate.now().getDayOfWeek();
     public DayOfWeek getDayOfTheWeek() {
         return dayOfTheWeek;
     }
+    private String dayOfWeekAsAString =getDayOfTheWeek().toString().substring(0,2);
+    public String getDayOfTheWeekAsString() {
+        return dayOfWeekAsAString;
+    }
 
     public DateTimeFormatter formatterForDateDots = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     public DateTimeFormatter formatterForDateDashes = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-    public Calendar(int priority, String name, String chosenDate, DayOfWeek dayOfTheWeek) {        //Constructor for situation on certain day
+    public Calendar(int priority, String name, String chosenDate, String DayOfTheWeekAsString) {        //Constructor for situation on certain day
         super(priority, name);
         this.chosenDate = chosenDate;
-        this.dayOfTheWeek = dayOfTheWeek;
+        this.dayOfWeekAsAString = DayOfTheWeekAsString;
+        this.chosenDateTime = parseChosenDateTime(chosenDate);
     }
 
     //No-argument constructor to use in Db class to initialize default class object
@@ -32,24 +56,18 @@ public class Calendar extends Occurrence {
     }
 
     public void setDate(String chosenDate) {
-        while(true) {
+        while (true) {
             System.out.print("Choose a date for the action You'd like to create. ");
             System.out.println("Date should have format: DD-MM-YYYY or DD.MM.YYYY");
-            try {
-                this.chosenDate = choice.nextLine();
-                if (this.chosenDate.charAt(2) == '-' && this.chosenDate.charAt(5) == '-') {
-                    LocalDate formattedDate = LocalDate.parse(this.chosenDate, formatterForDateDashes);
-                    this.dayOfTheWeek = formattedDate.getDayOfWeek();
-                    break;
-                } else if (this.chosenDate.charAt(2) == '.' && this.chosenDate.charAt(5) == '.') {
-                    LocalDate formattedDate = LocalDate.parse(this.chosenDate, formatterForDateDots);
-                    this.dayOfTheWeek = formattedDate.getDayOfWeek();
-                } else {
-                    System.out.print("No date provided or the format is incorrect, please try again: ");
-                }
-            } catch(DateTimeParseException e) {
-                this.chosenDate = null;
-                this.dayOfTheWeek = null;
+            String input = choice.nextLine();
+            this.chosenDate = input;
+            this.chosenDateTime = parseChosenDateTime(input);
+            if(this.chosenDateTime != null) {
+                this.dayOfTheWeek = this.chosenDateTime.getDayOfWeek();
+                this.dayOfWeekAsAString = this.dayOfTheWeek.toString().substring(0, 2);
+                break;
+            } else {
+                System.out.print("No date provided or the format is incorrect, please try again: ");
             }
         }
     }

@@ -14,6 +14,9 @@ import org.bson.Document;
 
 public class MongoDBService {
     private final MongoClient mongoClient;
+    public MongoClient getMongoClient() {
+        return mongoClient;
+    }
     private final MongoDatabase database;
     private final MongoCollection<Document> collection;
 
