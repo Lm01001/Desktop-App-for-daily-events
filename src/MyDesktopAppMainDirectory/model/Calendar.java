@@ -11,22 +11,8 @@ public class Calendar extends Occurrence {
     public String getChosenDate() {
         return chosenDate;
     }
-    private ZonedDateTime chosenDateTime;
-    private ZonedDateTime parseChosenDateTime(String dateString) {
-        if(dateString == null || dateString.isEmpty())
-            return null;
-        try {
-            if(dateString.charAt(2) == '-' && dateString.charAt(5) == '-') {
-                LocalDate ld = LocalDate.parse(dateString, formatterForDateDashes);
-                return ld.atStartOfDay(ZoneId.systemDefault());
-            } else if(dateString.charAt(2) == '.' && dateString.charAt(5) == '.') {
-                LocalDate ld = LocalDate.parse(dateString, formatterForDateDots);
-                return ld.atStartOfDay(ZoneId.systemDefault());
-            }
-        } catch(DateTimeParseException e) {
-            return null;
-        }
-        return null;
+    public void setChosenDate(String chosenDate) {
+        this.chosenDate = chosenDate;
     }
 
     private DayOfWeek dayOfTheWeek = LocalDate.now().getDayOfWeek();
@@ -45,7 +31,6 @@ public class Calendar extends Occurrence {
         super(priority, name);
         this.chosenDate = chosenDate;
         this.dayOfWeekAsAString = DayOfTheWeekAsString;
-        this.chosenDateTime = parseChosenDateTime(chosenDate);
     }
 
     //No-argument constructor to use in Db class to initialize default class object
@@ -55,7 +40,7 @@ public class Calendar extends Occurrence {
         this.dayOfTheWeek = DayOfWeek.SATURDAY;
     }
 
-    public void setDate(String chosenDate) {
+    /*public void setDate(String chosenDate) {
         while (true) {
             System.out.print("Choose a date for the action You'd like to create. ");
             System.out.println("Date should have format: DD-MM-YYYY or DD.MM.YYYY");
@@ -70,7 +55,7 @@ public class Calendar extends Occurrence {
                 System.out.print("No date provided or the format is incorrect, please try again: ");
             }
         }
-    }
+    }*/
 
     public String whatDayOfTheWeek() {      //Getting day of the week based on provided date
         if(this.chosenDate != null) {

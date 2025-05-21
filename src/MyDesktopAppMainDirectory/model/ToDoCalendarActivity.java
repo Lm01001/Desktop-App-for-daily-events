@@ -1,4 +1,5 @@
 package MyDesktopAppMainDirectory.model;
+import MyDesktopAppMainDirectory.controller.CalendarController;
 import MyDesktopAppMainDirectory.database.MongoDBService;
 import org.javatuples.Quartet;
 
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.time.ZonedDateTime;
 
 public class ToDoCalendarActivity extends Calendar {
+
     MongoDBService mongoDBService = new MongoDBService("MyDatabase", "MyCollection");;
     private String clientName = mongoDBService.getMongoClient().toString();
     private ZonedDateTime date;
@@ -72,7 +74,6 @@ public class ToDoCalendarActivity extends Calendar {
         this.index = index;
         this.dutifully = dutifully;
         this.howImportant = howImportant;
-        super.setDate(chosenDate);
     }
 
     public ToDoCalendarActivity(ZonedDateTime date, String clientName, Integer serviceNo) {
@@ -120,7 +121,6 @@ public class ToDoCalendarActivity extends Calendar {
     public ToDoCalendarActivity createAction() {
         super.setName(getName());
         super.setPriority(getPriority());
-        //super.setDate(getChosenDate());
         isMandatory();
         setDutifully(getIfMandatory());
         addHashMapValue();

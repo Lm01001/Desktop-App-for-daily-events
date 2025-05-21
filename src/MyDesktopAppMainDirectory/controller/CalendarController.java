@@ -2,6 +2,7 @@ package MyDesktopAppMainDirectory.controller;
 import MyDesktopAppMainDirectory.model.CalendarActivity;
 import MyDesktopAppMainDirectory.model.ToDoCalendarActivity;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -10,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -28,6 +30,7 @@ public class CalendarController implements Initializable {
     ZonedDateTime dateFocus;
     ZonedDateTime today;
     Map<Integer, StackPane> dayPaneMap = new HashMap<>();
+    String chosenDate;
 
     @FXML
     private Text year, month, day;
@@ -36,20 +39,29 @@ public class CalendarController implements Initializable {
     @FXML
     private Button returnButton;
     @FXML
-    private Label datesLabel;
+    private Label datesLabel, warningLabel;
     @FXML
     private Button insertCalendarEvent;
     @FXML
     private DatePicker datePick;
 
-
     @FXML
-    private void InsertingOnPlusClicked(ActionEvent event) {
-        LocalDate usersDate = datePick.getValue();
-        //System.out.println(usersDate.toString());
-        //Triple M, so months name is displayed
-        String formattedUsersDate = usersDate.format(DateTimeFormatter.ofPattern("dd.MMM.yyyy"));
-        datesLabel.setText(formattedUsersDate);
+    private String insertingOnPlusClicked(ActionEvent event) {
+        LocalDate localDate = datePick.getValue();
+        datePick.setOnAction(e -> {
+                System.out.println(datePick.getValue());
+        });
+        String formattedUsersDate = localDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.ENGLISH));
+        datesLabel.setText("Chosen date: " + formattedUsersDate);
+        formattedUsersDate = localDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        this.chosenDate = formattedUsersDate;
+        if(insertCalendarEvent.isDisable()) {
+            insertCalendarEvent.setDisable(false);
+        }
+        if(warningLabel.isVisible()) {
+            warningLabel.setVisible(false);
+        }
+        return this.chosenDate;
     }
 
     @FXML
@@ -70,6 +82,8 @@ public class CalendarController implements Initializable {
 
     @FXML
     public void initialize(URL url, ResourceBundle rb) {
+        //Only for making calendar (while choosing date) in english
+        Locale.setDefault(Locale.ENGLISH);
         dateFocus = ZonedDateTime.now();
         today = ZonedDateTime.now();
         drawCalendar();
@@ -181,17 +195,20 @@ public class CalendarController implements Initializable {
 
     @FXML
     private void insertCalendarEvent(ActionEvent event) throws IOException {
+        if(this.chosenDate == null) {
+            warningLabel.setVisible(true);
+            insertCalendarEvent.setDisable(true);
+            return;
+        }
+
+        String dateString = this.chosenDate;
         ToDoCalendarActivity toDoCalendarActivity = new ToDoCalendarActivity();
         ToDoCalendarActivity eventsDetails = toDoCalendarActivity.createAction();
+
+        eventsDetails.setChosenDate(dateString);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         List<ToDoCalendarActivity> calendarActivities = new ArrayList<>();
         calendarActivities.add(eventsDetails);
-        String dateString = eventsDetails.getChosenDate();
-        DateTimeFormatter formatter;
-        if (dateString.contains("-")) {
-            formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        } else {
-            formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        }
         LocalDate dateTime = LocalDate.parse(dateString, formatter);
         int day = dateTime.getDayOfMonth();
 
@@ -199,6 +216,9 @@ public class CalendarController implements Initializable {
         double rectangleWidth = calendar.getWidth() / 7;
         double rectangleHeight = calendar.getHeight() / 6;
         createCalendarActivity(calendarActivities, rectangleHeight, rectangleWidth, dayStackPane);
+        this.chosenDate = null;
+        datePick.getEditor().clear();
+        datePick.setPromptText(datePick.getPromptText());
     }
 
     private Map<Integer, List<ToDoCalendarActivity>> createCalendarMap(List<ToDoCalendarActivity> calendarActivities) {

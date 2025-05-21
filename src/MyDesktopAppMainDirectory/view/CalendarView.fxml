@@ -50,15 +50,20 @@
                 <Insets right="9.0" />
             </padding>
         </HBox>
-        <HBox layoutX="20.0" layoutY="28.0" prefHeight="44.0">
+        <HBox layoutX="670.0" layoutY="630.0"  prefHeight="44.0">   <!-- umiejscowienie return i podniesienie okienek do gory-->
             <Button fx:id="returnButton" text="Return" onAction="#returnButton"/>
         </HBox>
-        <HBox layoutX="700.0" layoutY="28.0" prefHeight="44.0" prefWidth="44.0">
-            <children>
-                <Button fx:id="insertCalendarEvent" text="+" onAction="#insertCalendarEvent"/>
-                <!-- <DatePicker fx:id="datePick" onAction="#InsertingOnPlusClicked" promptText="Enter events date" prefWidth="600.0" layoutX="800.0" layoutY="300.0"/>
-                <Label fx:id="datesLabel" alignment="CENTER_RIGHT" prefWidth="600.0" prefHeight="44.0" /> -->
-            </children>
+        <HBox layoutX="550.0" layoutY="28.0" prefHeight="44.0">
+            <DatePicker fx:id="datePick" onAction="#insertingOnPlusClicked" promptText="Enter events date" />
+        </HBox>
+        <HBox layoutX="550.0" layoutY="55.0" prefHeight="44.0">
+            <Label fx:id="datesLabel" />
+        </HBox>
+        <HBox layoutX="14.0" layoutY="23.0">
+            <Button fx:id="insertCalendarEvent" text="+" onAction="#insertCalendarEvent" />
+        </HBox>
+        <HBox layoutX="45.0" layoutY="23.0" >
+            <Label fx:id="warningLabel" text="Choose events date first!" style="-fx-text-fill: #8B0000; -fx-font-size: 16; -fx-font-weight: bold" visible="false"/>
         </HBox>
        <!-- <Button fx:id="createEvent" text="+" onAction="#onAddClicked"/>  -->
     </AnchorPane>
