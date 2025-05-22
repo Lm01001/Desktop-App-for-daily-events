@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
@@ -25,12 +26,16 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CalendarController implements Initializable {
     ZonedDateTime dateFocus;
     ZonedDateTime today;
     Map<Integer, StackPane> dayPaneMap = new HashMap<>();
     String chosenDate;
+    String formattedUsersDate;
+    List<ToDoCalendarActivity> calendarActivities;
+    LocalDate localDate;
 
     @FXML
     private Text year, month, day;
@@ -48,9 +53,6 @@ public class CalendarController implements Initializable {
     @FXML
     private String insertingOnPlusClicked(ActionEvent event) {
         LocalDate localDate = datePick.getValue();
-        datePick.setOnAction(e -> {
-                System.out.println(datePick.getValue());
-        });
         String formattedUsersDate = localDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.ENGLISH));
         datesLabel.setText("Chosen date: " + formattedUsersDate);
         formattedUsersDate = localDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
@@ -86,6 +88,10 @@ public class CalendarController implements Initializable {
         Locale.setDefault(Locale.ENGLISH);
         dateFocus = ZonedDateTime.now();
         today = ZonedDateTime.now();
+        localDate = LocalDate.now();
+        chosenDate = null;
+        calendarActivities = new ArrayList<>();
+        tooltip();
         drawCalendar();
     }
 
@@ -162,7 +168,7 @@ public class CalendarController implements Initializable {
 
     private void createCalendarActivity(List<ToDoCalendarActivity> calendarActivities, double rectangleHeight, double rectangleWidth, StackPane stackPane) {
         VBox calendarActivityBox = new VBox();
-
+        StringBuilder tooltipEventsInfo = new StringBuilder();
         for (int k = 0; k < calendarActivities.size(); k++) {
             if (k >= 2) {
                 Text moreActivities = new Text("...");
@@ -173,7 +179,12 @@ public class CalendarController implements Initializable {
                 break;
             }
             ToDoCalendarActivity activity = calendarActivities.get(k);
-            Text text = new Text(activity.getName() + " (" + activity.getHowImportant() + ", " + activity.getDutifully() + ")");
+            tooltipEventsInfo.append(datePick.getValue().getDayOfWeek().toString().toLowerCase()).append(" ")
+                    .append(activity.getChosenDate()).append("\nName: ").append(activity.getName()).append("\n")
+                    .append(activity.getHowImportant()).append("\nMandatory: ").append(activity.getDutifully())
+                    .append("\n\n");
+            Text text = new Text(activity.getName() + " (" + activity.getHowImportant() + ", "
+                    + activity.getDutifully() + ")");
             text.setWrappingWidth(rectangleWidth * 0.75);
             if(activity.getPriority() == 1) {
                 calendarActivityBox.setStyle("-fx-background-color:LIGHTBLUE");
@@ -187,10 +198,14 @@ public class CalendarController implements Initializable {
             });
             calendarActivityBox.getChildren().add(text);
         }
-        //calendarActivityBox.setTranslateY((rectangleHeight / 2) * 0.20);
+        calendarActivityBox.setTranslateY((rectangleHeight / 2) * 0.20);
         calendarActivityBox.setMaxWidth(rectangleWidth * 0.8);
         calendarActivityBox.setMaxHeight(rectangleHeight * 0.65);
         stackPane.getChildren().addFirst(calendarActivityBox);
+        if(!calendarActivities.isEmpty()){
+            Tooltip tooltip = new Tooltip(tooltipEventsInfo.toString());
+            Tooltip.install(stackPane, tooltip);
+        }
     }
 
     @FXML
@@ -207,15 +222,19 @@ public class CalendarController implements Initializable {
 
         eventsDetails.setChosenDate(dateString);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        List<ToDoCalendarActivity> calendarActivities = new ArrayList<>();
         calendarActivities.add(eventsDetails);
         LocalDate dateTime = LocalDate.parse(dateString, formatter);
+        List<ToDoCalendarActivity> newActivities = calendarActivities.stream()
+                .filter(a -> {
+                    LocalDate date = LocalDate.parse(a.getChosenDate(), formatter);
+                    return date.equals(dateTime);
+                }).collect(Collectors.toList());
         int day = dateTime.getDayOfMonth();
 
         StackPane dayStackPane = dayPaneMap.get(day);
         double rectangleWidth = calendar.getWidth() / 7;
         double rectangleHeight = calendar.getHeight() / 6;
-        createCalendarActivity(calendarActivities, rectangleHeight, rectangleWidth, dayStackPane);
+        createCalendarActivity(newActivities, rectangleHeight, rectangleWidth, dayStackPane);
         this.chosenDate = null;
         datePick.getEditor().clear();
         datePick.setPromptText(datePick.getPromptText());
@@ -245,7 +264,11 @@ public class CalendarController implements Initializable {
         int year = dateFocus.getYear();
         int month = dateFocus.getMonth().getValue();
         //mongoDBService.insertCalendarEvent(calendarActivities);
-        //calendarActivities.add(new ToDoCalendarActivity();
+        //calendarActivities.add(new ToDoCalendarActivity());
         return createCalendarMap(calendarActivities);
+    }
+
+    private void tooltip(){
+        //Tooltip showEventsInfo = new Tooltip(tooltipEvents);
     }
 }

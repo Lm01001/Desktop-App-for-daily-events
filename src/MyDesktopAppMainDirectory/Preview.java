@@ -143,6 +143,13 @@ public class Preview extends Application  {
             try {
                 Parent root2 = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
                         ("/MyDesktopAppMainDirectory/view/TaskView.fxml")));
+                URL fxmlUrl = getClass().getResource("/MyDesktopAppMainDirectory/view/TaskView.fxml");
+                if(fxmlUrl == null)
+                    throw new IllegalStateException("FXML file not found!");
+                Stage stage2 = (Stage) tasksButton.getScene().getWindow();
+                stage2.setScene(new Scene(root2));
+                stage2.setTitle("Task list");
+                stage2.show();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }

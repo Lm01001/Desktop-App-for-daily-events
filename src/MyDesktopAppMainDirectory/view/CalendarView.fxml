@@ -17,6 +17,7 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.shape.Rectangle?>
 <AnchorPane prefHeight="642.0" prefWidth="744.0" style="-fx-background-color: #f2fafc;" xmlns="http://javafx.com/javafx/15.0.1"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="MyDesktopAppMainDirectory.controller.CalendarController">
         <FlowPane fx:id="calendar" hgap="10.0" layoutX="14.0" layoutY="116.0" prefHeight="498.0" prefWidth="716.0" vgap="5.0" />
@@ -64,6 +65,25 @@
         </HBox>
         <HBox layoutX="45.0" layoutY="23.0" >
             <Label fx:id="warningLabel" text="Choose events date first!" style="-fx-text-fill: #8B0000; -fx-font-size: 16; -fx-font-weight: bold" visible="false"/>
+        </HBox>
+        <HBox xmlns:fx="http://javafx.com/fxml" layoutY="630.0" layoutX="14.0" spacing="5.0">
+            <children>
+                <!-- na blok -->
+                <Rectangle width="15" height="15" fill="LIGHTBLUE" stroke="LIGHTBLUE" strokeWidth="2" />
+                <Text text="- Low priority"/>
+            </children>
+            <children>
+                <Text text="     "/>
+                <!-- na blok -->
+                <Rectangle width="15" height="15" fill="LIGHTGREEN" stroke="LIGHTGREEN" strokeWidth="2" />
+                <Text text="- Optional, to do"/>
+            </children>
+            <children>
+                <Text text="     "/>
+                <!-- na blok -->
+                <Rectangle width="15" height="15" fill="RED" stroke="RED" strokeWidth="2" />
+                <Text text="- Very important" />
+            </children>
         </HBox>
        <!-- <Button fx:id="createEvent" text="+" onAction="#onAddClicked"/>  -->
     </AnchorPane>
