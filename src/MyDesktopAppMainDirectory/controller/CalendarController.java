@@ -6,6 +6,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -18,6 +19,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import java.io.IOException;
@@ -33,7 +36,6 @@ public class CalendarController implements Initializable {
     ZonedDateTime today;
     Map<Integer, StackPane> dayPaneMap = new HashMap<>();
     String chosenDate;
-    String formattedUsersDate;
     List<ToDoCalendarActivity> calendarActivities;
     LocalDate localDate;
 
@@ -90,8 +92,8 @@ public class CalendarController implements Initializable {
         today = ZonedDateTime.now();
         localDate = LocalDate.now();
         chosenDate = null;
+        this.datePick.setValue(null);
         calendarActivities = new ArrayList<>();
-        tooltip();
         drawCalendar();
     }
 
@@ -168,39 +170,43 @@ public class CalendarController implements Initializable {
 
     private void createCalendarActivity(List<ToDoCalendarActivity> calendarActivities, double rectangleHeight, double rectangleWidth, StackPane stackPane) {
         VBox calendarActivityBox = new VBox();
+        Rectangle calendarActivityRectangleClip = new Rectangle(rectangleWidth, rectangleHeight);
+        stackPane.setClip(calendarActivityRectangleClip);
         StringBuilder tooltipEventsInfo = new StringBuilder();
         for (int k = 0; k < calendarActivities.size(); k++) {
-            if (k >= 2) {
+            ToDoCalendarActivity activity = calendarActivities.get(k);
+            tooltipEventsInfo.append((k+1)).append(". ").append(datePick.getValue().getDayOfWeek().toString().toLowerCase()).append(" ")
+                    .append(activity.getChosenDate()).append("\nName: ").append(activity.getName()).append("\n")
+                    .append(activity.getHowImportant()).append("\nMandatory: ").append(activity.getDutifully())
+                    .append("\n");
+            if (k >= 2) { //zmienic na do 5 wlacznie jak sie ogarnie + do bazy danych tez sa wrzucane
                 Text moreActivities = new Text("...");
+                moreActivities.setFont(Font.font("System", FontWeight.BOLD, 12));
                 calendarActivityBox.getChildren().add(moreActivities);
                 moreActivities.setOnMouseClicked(mouseEvent -> {
                     System.out.println(calendarActivities);
                 });
                 break;
             }
-            ToDoCalendarActivity activity = calendarActivities.get(k);
-            tooltipEventsInfo.append(datePick.getValue().getDayOfWeek().toString().toLowerCase()).append(" ")
-                    .append(activity.getChosenDate()).append("\nName: ").append(activity.getName()).append("\n")
-                    .append(activity.getHowImportant()).append("\nMandatory: ").append(activity.getDutifully())
-                    .append("\n\n");
-            Text text = new Text(activity.getName() + " (" + activity.getHowImportant() + ", "
-                    + activity.getDutifully() + ")");
+
+            Text text = new Text((k + 1) + ". ☆\n");
             text.setWrappingWidth(rectangleWidth * 0.75);
+            text.setFont(Font.font("System", FontWeight.BOLD, 12));
             if(activity.getPriority() == 1) {
-                calendarActivityBox.setStyle("-fx-background-color:LIGHTBLUE");
+                text.setFill(Color.BLUE);
             } else if (activity.getPriority() == 2) {
-                calendarActivityBox.setStyle("-fx-background-color:LIGHTGREEN");
-            } else {
-                calendarActivityBox.setStyle("-fx-background-color:RED");
-            }
+                text.setFill(Color.GREEN);
+            } else { text.setFill(Color.DARKRED); }
             text.setOnMouseClicked(mouseEvent -> {
                 System.out.println(text.getText());
             });
             calendarActivityBox.getChildren().add(text);
         }
-        calendarActivityBox.setTranslateY((rectangleHeight / 2) * 0.20);
-        calendarActivityBox.setMaxWidth(rectangleWidth * 0.8);
-        calendarActivityBox.setMaxHeight(rectangleHeight * 0.65);
+        calendarActivityBox.setStyle("-fx-background-color:LIGHTGRAY");
+        /*calendarActivityBox.setPrefWidth(rectangleWidth * 0.8);
+        calendarActivityBox.setPrefHeight(rectangleHeight * 0.65);*/
+        //calendarActivityBox.setTranslateY(rectangleHeight * 0.25);
+        stackPane.getChildren().removeIf(node -> node instanceof VBox);
         stackPane.getChildren().addFirst(calendarActivityBox);
         if(!calendarActivities.isEmpty()){
             Tooltip tooltip = new Tooltip(tooltipEventsInfo.toString());
@@ -219,7 +225,7 @@ public class CalendarController implements Initializable {
         String dateString = this.chosenDate;
         ToDoCalendarActivity toDoCalendarActivity = new ToDoCalendarActivity();
         ToDoCalendarActivity eventsDetails = toDoCalendarActivity.createAction();
-
+        datesLabel.setVisible(false);
         eventsDetails.setChosenDate(dateString);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         calendarActivities.add(eventsDetails);
@@ -235,7 +241,6 @@ public class CalendarController implements Initializable {
         double rectangleWidth = calendar.getWidth() / 7;
         double rectangleHeight = calendar.getHeight() / 6;
         createCalendarActivity(newActivities, rectangleHeight, rectangleWidth, dayStackPane);
-        this.chosenDate = null;
         datePick.getEditor().clear();
         datePick.setPromptText(datePick.getPromptText());
     }
@@ -245,10 +250,7 @@ public class CalendarController implements Initializable {
 
         for(ToDoCalendarActivity activity : calendarActivities) {
             ZonedDateTime activityDate = activity.getDate();
-
             if(activityDate.getYear() == dateFocus.getYear() && activityDate.getMonth() == dateFocus.getMonth()) {
-                //calendarActivityMap.put(activityDate, List.of(activity));
-                //List<ToDoCalendarActivity> OldListByDate = calendarActivityMap.get(activityDate);
                 int activityDay = activityDate.getDayOfMonth();
                 List<ToDoCalendarActivity> newList = calendarActivityMap.getOrDefault(activityDay, new ArrayList<>());
                 newList.add(activity);
@@ -266,9 +268,5 @@ public class CalendarController implements Initializable {
         //mongoDBService.insertCalendarEvent(calendarActivities);
         //calendarActivities.add(new ToDoCalendarActivity());
         return createCalendarMap(calendarActivities);
-    }
-
-    private void tooltip(){
-        //Tooltip showEventsInfo = new Tooltip(tooltipEvents);
     }
 }

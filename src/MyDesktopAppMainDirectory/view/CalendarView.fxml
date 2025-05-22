@@ -69,19 +69,21 @@
         <HBox xmlns:fx="http://javafx.com/fxml" layoutY="630.0" layoutX="14.0" spacing="5.0">
             <children>
                 <!-- na blok -->
-                <Rectangle width="15" height="15" fill="LIGHTBLUE" stroke="LIGHTBLUE" strokeWidth="2" />
+                <Rectangle width="15" height="15" fill="BLUE" stroke="BLUE" strokeWidth="2" />
                 <Text text="- Low priority"/>
             </children>
             <children>
+                <!-- space between blocks -->
                 <Text text="     "/>
                 <!-- na blok -->
-                <Rectangle width="15" height="15" fill="LIGHTGREEN" stroke="LIGHTGREEN" strokeWidth="2" />
+                <Rectangle width="15" height="15" fill="GREEN" stroke="GREEN" strokeWidth="2" />
                 <Text text="- Optional, to do"/>
             </children>
             <children>
+                <!-- space between blocks -->
                 <Text text="     "/>
-                <!-- na blok -->
-                <Rectangle width="15" height="15" fill="RED" stroke="RED" strokeWidth="2" />
+                <!-- square -->
+                <Rectangle width="15" height="15" fill="DARKRED" stroke="DARKRED" strokeWidth="2" />
                 <Text text="- Very important" />
             </children>
         </HBox>

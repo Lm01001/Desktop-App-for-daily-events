@@ -101,13 +101,12 @@ public class ToDoCalendarActivity extends Calendar {
             System.out.print("Please choose if action is mandatory, ");
             System.out.println("where 1 means yes, 2 means no.");
             try {
-
                 usersChoice = Integer.parseInt(choice.nextLine());
                 if(usersChoice == 1) {
-                    this.ifMandatory = true;
+                    setIfMandatory(true);
                     return true;
-                }else if(usersChoice == 0) {
-                    this.ifMandatory = false;
+                }else if(usersChoice == 2) {
+                    setIfMandatory(false);
                     return false;
                 } else {
                     System.out.print("Number out of range, please try again: ");
