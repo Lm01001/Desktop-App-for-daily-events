@@ -1,6 +1,7 @@
 package MyDesktopAppMainDirectory;
 
 
+import MyDesktopAppMainDirectory.database.MongoDBService;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -17,7 +18,7 @@ import java.net.URL;
 import java.util.Objects;
 
 public class Preview2 extends Application {
-
+    MongoDBService mongoDBService = new MongoDBService();
     @FXML
     private Button exitButton, exportButton, shoppingListButton, calendarButton, tasksButton;
 

@@ -1,17 +1,13 @@
 package MyDesktopAppMainDirectory.model;
-import MyDesktopAppMainDirectory.controller.CalendarController;
+
 import MyDesktopAppMainDirectory.database.MongoDBService;
 import org.javatuples.Quartet;
-
-import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.time.ZonedDateTime;
 
 public class ToDoCalendarActivity extends Calendar {
 
-    MongoDBService mongoDBService = new MongoDBService("MyDatabase", "MyCollection");;
+    MongoDBService mongoDBService = new MongoDBService();
     private String clientName = mongoDBService.getMongoClient().toString();
     private ZonedDateTime date;
     private Integer serviceNo;
@@ -131,11 +127,7 @@ public class ToDoCalendarActivity extends Calendar {
         return date;
     }
 
-    /*public void setDate(ZonedDateTime date) {
-        this.date = date;
-    }*/
-
-    public String getClientName() {
+   /* public String getClientName() {
         return clientName;
     }
 
@@ -149,7 +141,7 @@ public class ToDoCalendarActivity extends Calendar {
 
     public void setServiceNo(Integer serviceNo) {
         this.serviceNo = serviceNo;
-    }
+    }*/
 
     @Override
     public String toString() {

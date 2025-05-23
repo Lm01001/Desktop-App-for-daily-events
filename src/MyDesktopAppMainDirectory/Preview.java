@@ -29,7 +29,7 @@ public class Preview extends Application  {
     @FXML
     Button insertCalendarEvent, insertTask, insertShoppingList, findAll, finById, deletePosition, editPosition;
 
-    MongoDBService mongoDBService = new MongoDBService("MyDatabase", "MyCollection");
+    MongoDBService mongoDBService = new MongoDBService();
     /*@Override
     public void start(Stage stage) throws Exception{
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource

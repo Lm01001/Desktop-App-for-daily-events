@@ -1,19 +1,17 @@
 package MyDesktopAppMainDirectory.controller;
-import MyDesktopAppMainDirectory.model.CalendarActivity;
+
+import MyDesktopAppMainDirectory.database.MongoDBService;
 import MyDesktopAppMainDirectory.model.ToDoCalendarActivity;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -38,6 +36,8 @@ public class CalendarController implements Initializable {
     String chosenDate;
     List<ToDoCalendarActivity> calendarActivities;
     LocalDate localDate;
+    MongoDBService mongoDBService;
+    ToDoCalendarActivity toDoCalendarActivity;
 
     @FXML
     private Text year, month, day;
@@ -52,12 +52,15 @@ public class CalendarController implements Initializable {
     @FXML
     private DatePicker datePick;
 
+
+    //przy rejestracji do mngodb atlas przy najezdzaniu na przycisk krawedzie sie zaokraglaja w polowe okrege zamiast prostokata
+    //ustawic zeby do wyjscia zatrzymywalo te dane wprowadzone juz, czyli cos z bd
     @FXML
     private String insertingOnPlusClicked(ActionEvent event) {
         LocalDate localDate = datePick.getValue();
         String formattedUsersDate = localDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.ENGLISH));
         datesLabel.setText("Chosen date: " + formattedUsersDate);
-        formattedUsersDate = localDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        //formattedUsersDate = localDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         this.chosenDate = formattedUsersDate;
         if(insertCalendarEvent.isDisable()) {
             insertCalendarEvent.setDisable(false);
@@ -91,9 +94,10 @@ public class CalendarController implements Initializable {
         dateFocus = ZonedDateTime.now();
         today = ZonedDateTime.now();
         localDate = LocalDate.now();
-        chosenDate = null;
+        this.chosenDate = null;
         this.datePick.setValue(null);
         calendarActivities = new ArrayList<>();
+        this.mongoDBService = new MongoDBService();
         drawCalendar();
     }
 
@@ -173,9 +177,10 @@ public class CalendarController implements Initializable {
         Rectangle calendarActivityRectangleClip = new Rectangle(rectangleWidth, rectangleHeight);
         stackPane.setClip(calendarActivityRectangleClip);
         StringBuilder tooltipEventsInfo = new StringBuilder();
+
         for (int k = 0; k < calendarActivities.size(); k++) {
             ToDoCalendarActivity activity = calendarActivities.get(k);
-            tooltipEventsInfo.append((k+1)).append(". ").append(datePick.getValue().getDayOfWeek().toString().toLowerCase()).append(" ")
+            tooltipEventsInfo.append((k+1)).append(". ").append(datePick.getValue().getDayOfWeek().toString().toLowerCase()).append(", ")
                     .append(activity.getChosenDate()).append("\nName: ").append(activity.getName()).append("\n")
                     .append(activity.getHowImportant()).append("\nMandatory: ").append(activity.getDutifully())
                     .append("\n");
@@ -183,6 +188,7 @@ public class CalendarController implements Initializable {
                 Text moreActivities = new Text("...");
                 moreActivities.setFont(Font.font("System", FontWeight.BOLD, 12));
                 calendarActivityBox.getChildren().add(moreActivities);
+                this.mongoDBService.insertCalendarEvent(calendarActivities);
                 moreActivities.setOnMouseClicked(mouseEvent -> {
                     System.out.println(calendarActivities);
                 });
@@ -208,10 +214,16 @@ public class CalendarController implements Initializable {
         //calendarActivityBox.setTranslateY(rectangleHeight * 0.25);
         stackPane.getChildren().removeIf(node -> node instanceof VBox);
         stackPane.getChildren().addFirst(calendarActivityBox);
+        this.mongoDBService.insertCalendarEvent(calendarActivities);
+        if(!this.toDoCalendarActivity.ifStillInProgress().equals("yes")) {
+            mongoDBService.close();
+        }
+         //zmienic to pozniej i jakos ogarnac czy ktos chce zapisac wszystkie zmiany
         if(!calendarActivities.isEmpty()){
             Tooltip tooltip = new Tooltip(tooltipEventsInfo.toString());
             Tooltip.install(stackPane, tooltip);
         }
+        datePick.getEditor().clear();
     }
 
     @FXML
@@ -223,12 +235,15 @@ public class CalendarController implements Initializable {
         }
 
         String dateString = this.chosenDate;
-        ToDoCalendarActivity toDoCalendarActivity = new ToDoCalendarActivity();
+        this.toDoCalendarActivity = new ToDoCalendarActivity();
         ToDoCalendarActivity eventsDetails = toDoCalendarActivity.createAction();
         datesLabel.setVisible(false);
         eventsDetails.setChosenDate(dateString);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
         calendarActivities.add(eventsDetails);
+        /*toDoCalendarActivity = new ToDoCalendarActivity(eventsDetails.getPriority(),
+                eventsDetails.getName(), eventsDetails.getChosenDate(), eventsDetails.getDayOfTheWeekAsString(),
+                eventsDetails.getIndex(), eventsDetails.getDutifully(), eventsDetails.getHowImportant());*/
         LocalDate dateTime = LocalDate.parse(dateString, formatter);
         List<ToDoCalendarActivity> newActivities = calendarActivities.stream()
                 .filter(a -> {
