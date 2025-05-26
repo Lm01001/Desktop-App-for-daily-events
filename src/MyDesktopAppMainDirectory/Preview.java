@@ -115,7 +115,10 @@ public class Preview extends Application  {
 
         exitButton = new Button();
         exitButton.setText("Exit");
-        exitButton.setOnAction(e -> Platform.exit());
+        exitButton.setOnAction(e -> {
+            mongoDBService.close();
+            Platform.exit();
+        });
 
         exportButton = new Button();
         exportButton.setText("Export data");

@@ -25,6 +25,7 @@ public class Preview2 extends Application {
     @FXML
     private void initialize() {
         exitButton.setOnAction(e -> Platform.exit());
+
         /*exportButton.setOnAction(e -> {
             // tutaj implementuj eksport
         });*/

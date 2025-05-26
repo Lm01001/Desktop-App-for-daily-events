@@ -44,11 +44,9 @@ public class CalendarController implements Initializable {
     @FXML
     private FlowPane calendar;
     @FXML
-    private Button returnButton;
+    private Button returnButton, insertCalendarEvent, showTasks;
     @FXML
     private Label datesLabel, warningLabel;
-    @FXML
-    private Button insertCalendarEvent;
     @FXML
     private DatePicker datePick;
 
@@ -177,7 +175,6 @@ public class CalendarController implements Initializable {
         Rectangle calendarActivityRectangleClip = new Rectangle(rectangleWidth, rectangleHeight);
         stackPane.setClip(calendarActivityRectangleClip);
         StringBuilder tooltipEventsInfo = new StringBuilder();
-
         for (int k = 0; k < calendarActivities.size(); k++) {
             ToDoCalendarActivity activity = calendarActivities.get(k);
             tooltipEventsInfo.append((k+1)).append(". ").append(datePick.getValue().getDayOfWeek().toString().toLowerCase()).append(", ")
@@ -188,13 +185,11 @@ public class CalendarController implements Initializable {
                 Text moreActivities = new Text("...");
                 moreActivities.setFont(Font.font("System", FontWeight.BOLD, 12));
                 calendarActivityBox.getChildren().add(moreActivities);
-                this.mongoDBService.insertCalendarEvent(calendarActivities);
                 moreActivities.setOnMouseClicked(mouseEvent -> {
                     System.out.println(calendarActivities);
                 });
                 break;
             }
-
             Text text = new Text((k + 1) + ". ☆\n");
             text.setWrappingWidth(rectangleWidth * 0.75);
             text.setFont(Font.font("System", FontWeight.BOLD, 12));
@@ -214,7 +209,6 @@ public class CalendarController implements Initializable {
         //calendarActivityBox.setTranslateY(rectangleHeight * 0.25);
         stackPane.getChildren().removeIf(node -> node instanceof VBox);
         stackPane.getChildren().addFirst(calendarActivityBox);
-        this.mongoDBService.insertCalendarEvent(calendarActivities);
         if(!this.toDoCalendarActivity.ifStillInProgress().equals("yes")) {
             mongoDBService.close();
         }
@@ -251,7 +245,7 @@ public class CalendarController implements Initializable {
                     return date.equals(dateTime);
                 }).collect(Collectors.toList());
         int day = dateTime.getDayOfMonth();
-
+        this.mongoDBService.insertCalendarEvent(calendarActivities);
         StackPane dayStackPane = dayPaneMap.get(day);
         double rectangleWidth = calendar.getWidth() / 7;
         double rectangleHeight = calendar.getHeight() / 6;
