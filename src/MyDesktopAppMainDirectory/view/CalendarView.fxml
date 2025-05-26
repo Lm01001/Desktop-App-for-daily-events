@@ -63,6 +63,9 @@
         <HBox layoutX="14.0" layoutY="23.0">
             <Button fx:id="insertCalendarEvent" text="+" onAction="#insertCalendarEvent" />
         </HBox>
+        <HBox layoutX="14.0" layoutY="23.0">
+            <Button fx:id="showTasks" text="Show tasks for this month" onAction="#getCalendarActivitiesMonth" />
+        </HBox>
         <HBox layoutX="45.0" layoutY="23.0" >
             <Label fx:id="warningLabel" text="Choose events date first!" style="-fx-text-fill: #8B0000; -fx-font-size: 16; -fx-font-weight: bold" visible="false"/>
         </HBox>

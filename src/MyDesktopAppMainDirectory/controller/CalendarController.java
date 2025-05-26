@@ -278,4 +278,9 @@ public class CalendarController implements Initializable {
         //calendarActivities.add(new ToDoCalendarActivity());
         return createCalendarMap(calendarActivities);
     }
+
+   @FXML  //najwyzej sprawdzic czy overloading ok
+   private Map<Integer, List<ToDoCalendarActivity>> getCalendarActivitiesMonth(ActionEvent event) {
+       return createCalendarMap(calendarActivities);
+   }
 }
