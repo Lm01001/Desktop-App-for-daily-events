@@ -38,6 +38,8 @@ public class CalendarController implements Initializable {
     LocalDate localDate;
     MongoDBService mongoDBService;
     ToDoCalendarActivity toDoCalendarActivity;
+    boolean checkIfCreated = false;
+
 
     @FXML
     private Text year, month, day;
@@ -209,9 +211,9 @@ public class CalendarController implements Initializable {
         //calendarActivityBox.setTranslateY(rectangleHeight * 0.25);
         stackPane.getChildren().removeIf(node -> node instanceof VBox);
         stackPane.getChildren().addFirst(calendarActivityBox);
-        if(!this.toDoCalendarActivity.ifStillInProgress().equals("yes")) {
+        /*if(!this.toDoCalendarActivity.ifStillInProgress().equals("yes")) {
             mongoDBService.close();
-        }
+        }*/
          //zmienic to pozniej i jakos ogarnac czy ktos chce zapisac wszystkie zmiany
         if(!calendarActivities.isEmpty()){
             Tooltip tooltip = new Tooltip(tooltipEventsInfo.toString());
@@ -252,6 +254,9 @@ public class CalendarController implements Initializable {
         createCalendarActivity(newActivities, rectangleHeight, rectangleWidth, dayStackPane);
         datePick.getEditor().clear();
         datePick.setPromptText(datePick.getPromptText());
+        if(!checkIfCreated) {
+            this.checkIfCreated = true;
+        }
     }
 
     private Map<Integer, List<ToDoCalendarActivity>> createCalendarMap(List<ToDoCalendarActivity> calendarActivities) {
@@ -271,16 +276,30 @@ public class CalendarController implements Initializable {
 
    private Map<Integer, List<ToDoCalendarActivity>> getCalendarActivitiesMonth(ZonedDateTime dateFocus) {
         List<ToDoCalendarActivity> calendarActivities = new ArrayList<>();
-        //MongoDBService mongoDBService = new MongoDBService("MyDatabase", "MyCollection");
-        int year = dateFocus.getYear();
-        int month = dateFocus.getMonth().getValue();
-        //mongoDBService.insertCalendarEvent(calendarActivities);
-        //calendarActivities.add(new ToDoCalendarActivity());
         return createCalendarMap(calendarActivities);
     }
 
    @FXML  //najwyzej sprawdzic czy overloading ok
-   private Map<Integer, List<ToDoCalendarActivity>> getCalendarActivitiesMonth(ActionEvent event) {
-       return createCalendarMap(calendarActivities);
+   private List<ToDoCalendarActivity> showCalendarActivitiesMonth(ActionEvent event) {
+       List<ToDoCalendarActivity> activities = mongoDBService.findAll(ToDoCalendarActivity.class);
+       if(activities.isEmpty() && !checkIfCreated) {
+           System.out.println("No added activities.");
+           return null;
+       }
+       return activities;
    }
+
+   /*private Map<Integer, List<CalendarActivity>> getCalendarActivitiesMonth(ZonedDateTime dateFocus) {
+        List<CalendarActivity> calendarActivities = new ArrayList<>();
+        int year = dateFocus.getYear();
+        int month = dateFocus.getMonth().getValue();
+
+        Random random = new Random();
+        for (int i = 0; i < 50; i++) {
+            ZonedDateTime time = ZonedDateTime.of(year, month, random.nextInt(27)+1, 16,0,0,0,dateFocus.getZone());
+            calendarActivities.add(new CalendarActivity(time, "Hans", 111111));
+        }
+
+        return createCalendarMap(calendarActivities);
+    }*/
 }

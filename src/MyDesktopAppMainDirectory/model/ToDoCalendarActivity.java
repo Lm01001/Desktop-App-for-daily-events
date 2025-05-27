@@ -1,14 +1,15 @@
 package MyDesktopAppMainDirectory.model;
 
 import MyDesktopAppMainDirectory.database.MongoDBService;
+import com.google.gson.annotations.Expose;
 import org.javatuples.Quartet;
 import java.util.HashMap;
 import java.time.ZonedDateTime;
 
 public class ToDoCalendarActivity extends Calendar {
 
-    MongoDBService mongoDBService = new MongoDBService();
-    private String clientName = mongoDBService.getMongoClient().toString();
+
+    private String clientName;
     private ZonedDateTime date;
     private Integer serviceNo;
     private boolean ifMandatory = false;
@@ -24,11 +25,7 @@ public class ToDoCalendarActivity extends Calendar {
         return dutifully;
     }
     public void setDutifully(boolean ifMandatory) {
-        if(ifMandatory) {
-            this.dutifully = "Yes";
-        } else {
-            this.dutifully = "No";
-        }
+        this.dutifully = ifMandatory ? "Yes" : "No";
     }
 
     private int index = 0;
@@ -72,7 +69,7 @@ public class ToDoCalendarActivity extends Calendar {
         this.howImportant = howImportant;
     }
 
-    public ToDoCalendarActivity(ZonedDateTime date, String clientName, Integer serviceNo) {
+    /*public ToDoCalendarActivity(ZonedDateTime date, String clientName, Integer serviceNo) {
         this.date = date;
         if (mongoDBService != null && clientName != null) {
             System.out.println(mongoDBService.getMongoClient().toString());
@@ -81,7 +78,7 @@ public class ToDoCalendarActivity extends Calendar {
         }
         this.clientName = clientName;
         this.serviceNo = serviceNo;
-    }
+    }*/
 
     //No-argument constructor to initialize an object in Db class avoiding NullPointerException
     public ToDoCalendarActivity() {

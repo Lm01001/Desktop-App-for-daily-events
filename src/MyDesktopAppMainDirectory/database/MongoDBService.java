@@ -1,25 +1,21 @@
 package MyDesktopAppMainDirectory.database;
 import MyDesktopAppMainDirectory.model.*;
-import com.mongodb.MongoNamespace;
-import com.mongodb.ReadConcern;
-import com.mongodb.ReadPreference;
-import com.mongodb.WriteConcern;
-import com.mongodb.bulk.BulkWriteResult;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.mongodb.client.*;
 import com.mongodb.client.model.*;
-import com.mongodb.client.result.DeleteResult;
-import com.mongodb.client.result.InsertManyResult;
-import com.mongodb.client.result.InsertOneResult;
-import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
-import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.conversions.Bson;
-import org.javatuples.Quartet;
+import org.bson.types.ObjectId;
+
+import java.io.*;
+import java.lang.reflect.Type;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 import com.google.gson.Gson;
-import org.bson.Document;
 
 public class MongoDBService {
     String CONNECTION_STRING = "mongodb://localhost:27017";
@@ -30,7 +26,6 @@ public class MongoDBService {
         return mongoClient;
     }
     private final MongoDatabase database;
-
     public MongoDatabase getDatabase() {
         return database;
     }
@@ -150,7 +145,33 @@ public class MongoDBService {
     }
 
     //Instance of Gson class from Gson library, used to convert between Java objects and JSON Strings
-    Gson gson = new Gson();
+    Gson gson = new GsonBuilder()
+            .excludeFieldsWithoutExposeAnnotation()
+            .disableInnerClassSerialization()
+            .create();
+
+    /*private <T> List<T> loadFromJsonResources(Class<T> entityType) {
+        String fileName;
+        if(entityType.equals(Task.class)) {
+            fileName = "task.json";
+        } else if(entityType.equals(ShoppingList.class)) {
+            fileName = "shoppingList.json";
+        } else if(entityType.equals(ToDoCalendarActivity.class)) {
+            fileName = "calendarEvent.json";
+        } else {
+            throw new IllegalArgumentException("Unsupported entity type");
+        }
+
+        InputStream is = getClass().getClassLoader().getResourceAsStream(fileName);
+        if (is == null) return new ArrayList<>();
+        try (InputStreamReader reader = new InputStreamReader(is)) {
+            Type listType = TypeToken.getParameterized(List.class, entityType).getType();
+            return gson.fromJson(reader, listType);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }*/
 
     //Generic method it(<T>) can return T here based on passed entityType
     private <T> T convertToEntity(Document doc, Class<T> entityType) {
@@ -160,6 +181,7 @@ public class MongoDBService {
 
     public <T> List<T> findAll(Class<T> entityType) {
         List<T> results = new ArrayList<>();
+
         if(entityType.equals(Task.class)) {
             setCategory("task");
             setArrayAccessKey("task");
@@ -170,29 +192,37 @@ public class MongoDBService {
             setCollection("shoppingList");
         } else if(entityType.equals(ToDoCalendarActivity.class)) {
             setCategory("calendarEvent");
-            setArrayAccessKey("pages");
+            setArrayAccessKey("calendarEvent");
             setCollection("calendarEvent");
         } else {
             throw new IllegalArgumentException("Unsupported entity type: " +
                     entityType.getName());
         }
-
-        FindIterable<Document> docs = collection.find(Filters.
-                eq("category", getCategory()));
-
-        for(Document document : docs) {
-        //To hide a warning about the unchecked cast
-            @SuppressWarnings("unchecked")
-            List<Document> docsInsideAnArray = (List<Document>) document.get(getArrayAccessKey());
-            if(docsInsideAnArray != null) {
-                for(Document docsInside : docsInsideAnArray) {
-                    T object = convertToEntity(docsInside, entityType);
-                    results.add(object);
+        Document eventsToShow = getCollection().find().sort(Sorts.descending("_id")).first();
+        //ObjectId id = eventsToShow.getObjectId("_id");
+        FindIterable<Document> docToSearch = collection.find(Filters.eq("_id", eventsToShow.get("_id")));
+        for (Document doc : docToSearch) {
+            List<Document> task = (List<Document>) doc.get("pages");
+            if (task != null) {
+                for (Document eventDoc : task) {
+                    String name = eventDoc.getString("task");
+                    System.out.println("Name: " + name);
                 }
             }
         }
         return results;
     }
+
+    /*private void saveCalendarActivitiesToJson(List<ToDoCalendarActivity> calendarActivities) {
+        Path path = Paths.get("src/MyDesktopAppMainDirectory/resources/calendarEvent.json");
+
+        try (FileWriter writer = new FileWriter(path.toFile())) {
+            gson.toJson(calendarActivities, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Failed to save calendar events to JSON file.");
+        }
+    }*/
 
     public <T extends Event>  T findById(Class<T> entityType, int id) {
         List<T> allResults = new ArrayList<>();
@@ -261,7 +291,7 @@ public class MongoDBService {
             List<Document> docsInsideAnArray = (List<Document>) document.get(getArrayAccessKey());
             if(docsInsideAnArray != null) {
                 for(Document docsInside : docsInsideAnArray) {
-                    if(docsInside.getInteger("index", -1) == id) {
+                    if(docsInside.getInteger("index", getTaskId() - 1) == id) {
                         Bson filter = Filters.eq("_id", document.getObjectId("_id"));
                         Bson update = Updates.pull(getArrayAccessKey(), Filters.eq("index", id));
                         collection.updateOne(filter, update);
