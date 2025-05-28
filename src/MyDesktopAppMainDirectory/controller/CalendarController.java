@@ -99,7 +99,7 @@ public class CalendarController implements Initializable {
         this.datePick.setValue(null);
         calendarActivities = new ArrayList<>();
         this.mongoDBService = new MongoDBService();
-        popup = new Popup();
+        //popup = new Popup();
         drawCalendar();
     }
 
@@ -258,7 +258,7 @@ public class CalendarController implements Initializable {
         if(!checkIfCreated) {
             this.checkIfCreated = true;
         }
-        if(!popup.isShowing()) {
+        /*if(!popup.isShowing()) {
             //popup.getContent().add(popupForCalendar);
             popupForCalendar.setVisible(true);
             popup.show(insertCalendarEvent,
@@ -266,7 +266,7 @@ public class CalendarController implements Initializable {
                     insertCalendarEvent.localToScreen(insertCalendarEvent.getBoundsInLocal()).getMaxY());
         } else {
             popup.hide();
-        }
+        }*/
     }
 
     private Map<Integer, List<ToDoCalendarActivity>> createCalendarMap(List<ToDoCalendarActivity> calendarActivities) {
@@ -298,18 +298,4 @@ public class CalendarController implements Initializable {
        }
        return activities;
    }
-
-   /*private Map<Integer, List<CalendarActivity>> getCalendarActivitiesMonth(ZonedDateTime dateFocus) {
-        List<CalendarActivity> calendarActivities = new ArrayList<>();
-        int year = dateFocus.getYear();
-        int month = dateFocus.getMonth().getValue();
-
-        Random random = new Random();
-        for (int i = 0; i < 50; i++) {
-            ZonedDateTime time = ZonedDateTime.of(year, month, random.nextInt(27)+1, 16,0,0,0,dateFocus.getZone());
-            calendarActivities.add(new CalendarActivity(time, "Hans", 111111));
-        }
-
-        return createCalendarMap(calendarActivities);
-    }*/
 }
