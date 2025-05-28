@@ -1,9 +1,17 @@
 package MyDesktopAppMainDirectory.model;
+
+import MyDesktopAppMainDirectory.database.MongoDBService;
+import com.google.gson.annotations.Expose;
 import org.javatuples.Quartet;
-import java.time.DayOfWeek;
 import java.util.HashMap;
+import java.time.ZonedDateTime;
 
 public class ToDoCalendarActivity extends Calendar {
+
+
+    private String clientName;
+    private ZonedDateTime date;
+    private Integer serviceNo;
     private boolean ifMandatory = false;
     public boolean getIfMandatory() {
         return ifMandatory;
@@ -17,11 +25,7 @@ public class ToDoCalendarActivity extends Calendar {
         return dutifully;
     }
     public void setDutifully(boolean ifMandatory) {
-        if(ifMandatory) {
-            this.dutifully = "Yes";
-        } else {
-            this.dutifully = "No";
-        }
+        this.dutifully = ifMandatory ? "Yes" : "No";
     }
 
     private int index = 0;
@@ -57,7 +61,7 @@ public class ToDoCalendarActivity extends Calendar {
         setIndex(getIndex() + 1);
     }
 
-    public ToDoCalendarActivity(int priority, String name, String chosenDate, DayOfWeek dayOfTheWeek,
+    public ToDoCalendarActivity(int priority, String name, String chosenDate, String dayOfTheWeek,
                                 int index, String dutifully, String howImportant) {
         super(priority, name, chosenDate, dayOfTheWeek);
         this.index = index;
@@ -65,28 +69,38 @@ public class ToDoCalendarActivity extends Calendar {
         this.howImportant = howImportant;
     }
 
+    /*public ToDoCalendarActivity(ZonedDateTime date, String clientName, Integer serviceNo) {
+        this.date = date;
+        if (mongoDBService != null && clientName != null) {
+            System.out.println(mongoDBService.getMongoClient().toString());
+        } else {
+            System.out.println("MongoDB service or client is not initialized.");
+        }
+        this.clientName = clientName;
+        this.serviceNo = serviceNo;
+    }*/
+
     //No-argument constructor to initialize an object in Db class avoiding NullPointerException
     public ToDoCalendarActivity() {
-        super(0, "Default name", "", DayOfWeek.SATURDAY);
+        super(0, "Default name", "", "");
         this.index = 0;
         this.dutifully = "Default";
         this.howImportant = "Default";
     }
 
     public int usersChoice = 0;
-    public void isMandatory() {
+    public boolean isMandatory() {
         while(true) {
             System.out.print("Please choose if action is mandatory, ");
             System.out.println("where 1 means yes, 2 means no.");
             try {
-
                 usersChoice = Integer.parseInt(choice.nextLine());
                 if(usersChoice == 1) {
-                    this.ifMandatory = true;
-                    break;
-                }else if(usersChoice == 0) {
-                    this.ifMandatory = false;
-                    break;
+                    setIfMandatory(true);
+                    return true;
+                }else if(usersChoice == 2) {
+                    setIfMandatory(false);
+                    return false;
                 } else {
                     System.out.print("Number out of range, please try again: ");
                 }
@@ -99,10 +113,39 @@ public class ToDoCalendarActivity extends Calendar {
     public ToDoCalendarActivity createAction() {
         super.setName(getName());
         super.setPriority(getPriority());
-        super.setDate(getChosenDate());
         isMandatory();
+        setDutifully(getIfMandatory());
         addHashMapValue();
         return new ToDoCalendarActivity(getPriority(), getName(), getChosenDate(),
-                getDayOfTheWeek(), getIndex(), getDutifully(), getHowImportant());
+                getDayOfTheWeekAsString(), getIndex(), getDutifully(), getHowImportant());
+    }
+
+    public ZonedDateTime getDate() {
+        return date;
+    }
+
+   /* public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
+
+    public Integer getServiceNo() {
+        return serviceNo;
+    }
+
+    public void setServiceNo(Integer serviceNo) {
+        this.serviceNo = serviceNo;
+    }*/
+
+    @Override
+    public String toString() {
+        return "CalenderActivity{" +
+                "date=" + date +
+                ", clientName='" + clientName + '\'' +
+                ", serviceNo=" + serviceNo +
+                '}';
     }
 }

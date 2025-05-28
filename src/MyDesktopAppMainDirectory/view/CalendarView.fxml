@@ -14,8 +14,12 @@
 
       <Button fx:id="addButton" text="Add" onAction="#onAddClicked"/>  -->
 
-    <AnchorPane prefHeight="642.0" prefWidth="744.0" style="-fx-background-color: #f2fafc;" xmlns="http://javafx.com/javafx/15.0.1"
-                xmlns:fx="http://javafx.com/fxml/1" fx:controller="MyDesktopAppMainDirectory.controller.CalendarController">
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.shape.Rectangle?>
+<AnchorPane prefHeight="642.0" prefWidth="744.0" style="-fx-background-color: #f2fafc;" xmlns="http://javafx.com/javafx/15.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="MyDesktopAppMainDirectory.controller.CalendarController">
         <FlowPane fx:id="calendar" hgap="10.0" layoutX="14.0" layoutY="116.0" prefHeight="498.0" prefWidth="716.0" vgap="5.0" />
         <HBox alignment="CENTER" layoutX="163.0" layoutY="14.0" prefHeight="44.0" prefWidth="419.0" spacing="5.0">
             <children>
@@ -47,7 +51,48 @@
                 <Insets right="9.0" />
             </padding>
         </HBox>
-        <Button fx:id="createEvent" text="+" onAction="#onAddClicked"/>  -->
+    <!-- <HBox layoutX="670.0" layoutY="630.0"  prefHeight="44.0">   umiejscowienie return i podniesienie okienek do gory-->
+        <HBox layoutX="494.5" layoutY="630.0"  prefHeight="44.0" spacing="25.0" >
+            <Button fx:id="showTasks" text="Show tasks for this month" onAction="#showCalendarActivitiesMonth" />
+            <Button fx:id="returnButton" text="Return" onAction="#returnButton"/>
+        </HBox>
+        <HBox layoutX="550.0" layoutY="28.0" prefHeight="44.0">
+            <DatePicker fx:id="datePick" onAction="#insertingOnPlusClicked" promptText="Enter events date" />
+        </HBox>
+        <HBox layoutX="550.0" layoutY="55.0" prefHeight="44.0">
+            <Label fx:id="datesLabel" />
+        </HBox>
+        <HBox layoutX="14.0" layoutY="23.0">
+            <Button fx:id="insertCalendarEvent" text="+" onAction="#insertCalendarEvent" />
+        </HBox>
+    <HBox layoutX="100.0" layoutY="200.0">
+        <Label fx:id="PopupForCalendar" text="This is a popup!" style="-fx-background-color: white; -fx-padding: 10; -fx-border-color: black" visible="false" />
+    </HBox>
+    <HBox layoutX="45.0" layoutY="23.0" >
+        <Label fx:id="warningLabel" text="Choose events date first!" style="-fx-text-fill: #8B0000; -fx-font-size: 16; -fx-font-weight: bold" visible="false"/>
+    </HBox>
+    <HBox xmlns:fx="http://javafx.com/fxml" layoutY="630.0" layoutX="14.0" spacing="5.0">
+        <children>
+            <!-- na blok -->
+            <Rectangle width="15" height="15" fill="BLUE" stroke="BLUE" strokeWidth="2" />
+            <Text text="- Low priority"/>
+        </children>
+        <children>
+            <!-- space between blocks -->
+            <Text text="     "/>
+            <!-- na blok -->
+            <Rectangle width="15" height="15" fill="GREEN" stroke="GREEN" strokeWidth="2" />
+            <Text text="- Optional, to do"/>
+        </children>
+        <children>
+            <!-- space between blocks -->
+            <Text text="     "/>
+            <!-- square -->
+            <Rectangle width="15" height="15" fill="DARKRED" stroke="DARKRED" strokeWidth="2" />
+            <Text text="- Very important" />
+        </children>
+    </HBox>
+       <!-- <Button fx:id="createEvent" text="+" onAction="#onAddClicked"/>  -->
     </AnchorPane>
 
 <!-- </VBox> -->

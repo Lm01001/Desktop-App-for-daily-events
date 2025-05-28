@@ -1,11 +1,14 @@
 package MyDesktopAppMainDirectory.model;
+import MyDesktopAppMainDirectory.database.MongoDBService;
+import com.mongodb.client.MongoClient;
+
 import java.time.ZonedDateTime;
 
 public class CalendarActivity {
+    MongoDBService mongoDBService;
     private ZonedDateTime date;
-    private String clientName;
     private Integer serviceNo;
-
+    private String clientName = mongoDBService.getMongoClient().toString();
     public CalendarActivity(ZonedDateTime date, String clientName, Integer serviceNo) {
         this.date = date;
         this.clientName = clientName;

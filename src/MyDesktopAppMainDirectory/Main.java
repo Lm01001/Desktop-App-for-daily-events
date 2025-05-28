@@ -6,8 +6,8 @@ import java.time.DayOfWeek;
 
 public class Main {
     public static void main(String[] args) {
-        ToDoCalendarActivity todo = new ToDoCalendarActivity(1, "cos", "11-11-2022",DayOfWeek.MONDAY ,
+        /*ToDoCalendarActivity todo = new ToDoCalendarActivity(1, "cos", "11-11-2022",DayOfWeek.MONDAY. ,
             0, "yes", "a");
-        todo.createAction();
+        todo.createAction();*/
     }
 }

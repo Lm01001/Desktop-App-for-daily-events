@@ -29,7 +29,7 @@ public class Preview extends Application  {
     @FXML
     Button insertCalendarEvent, insertTask, insertShoppingList, findAll, finById, deletePosition, editPosition;
 
-    MongoDBService mongoDBService;
+    MongoDBService mongoDBService = new MongoDBService();
     /*@Override
     public void start(Stage stage) throws Exception{
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
@@ -99,7 +99,10 @@ public class Preview extends Application  {
     public void start(Stage stage) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
                 ("/MyDesktopAppMainDirectory/view/MainView.fxml")));
-        Pane layout = new Pane();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setTitle("Desktop App");
+        /*Pane layout = new Pane();
         stage.setTitle("creating label");
         Label name = new Label("Daily tasks");
         name.setLayoutX(310);
@@ -108,15 +111,14 @@ public class Preview extends Application  {
         name.setMinHeight(80);
         name.setStyle("-fx-font: 36 arial");
         //name.setStyle("-fx-font-weight: bold");
-        layout.getChildren().add(name);
-
+        layout.getChildren().add(name);*/
 
         exitButton = new Button();
         exitButton.setText("Exit");
         exitButton.setOnAction(e -> {
+            mongoDBService.close();
             Platform.exit();
         });
-
 
         exportButton = new Button();
         exportButton.setText("Export data");
@@ -144,6 +146,13 @@ public class Preview extends Application  {
             try {
                 Parent root2 = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
                         ("/MyDesktopAppMainDirectory/view/TaskView.fxml")));
+                URL fxmlUrl = getClass().getResource("/MyDesktopAppMainDirectory/view/TaskView.fxml");
+                if(fxmlUrl == null)
+                    throw new IllegalStateException("FXML file not found!");
+                Stage stage2 = (Stage) tasksButton.getScene().getWindow();
+                stage2.setScene(new Scene(root2));
+                stage2.setTitle("Task list");
+                stage2.show();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -158,43 +167,19 @@ public class Preview extends Application  {
             try {
                 Parent root2 = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
                         ("/MyDesktopAppMainDirectory/view/CalendarView.fxml")));
+                URL fxmlUrl = getClass().getResource("/MyDesktopAppMainDirectory/view/CalendarView.fxml");
+                if(fxmlUrl == null)
+                    throw new IllegalStateException("FXML file not found!");
+                Stage stage2 = (Stage) calendarButton.getScene().getWindow();
+                stage2.setScene(new Scene(root2));
+                stage2.setTitle("Calendar");
+                stage2.show();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-            URL fxmlUrl = getClass().getResource("/MyDesktopAppMainDirectory/view/CalendarView.fxml");
-            if(fxmlUrl == null)
-                throw new IllegalStateException("FXML file not found!");
-            Scene scene = null;
-            try {
-                scene = new Scene(FXMLLoader.load(fxmlUrl));
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-            stage.setTitle("Calendar");
-            stage.setScene(scene);
-            stage.show();
         });
         //insertCalendarEvent.setOnAction(e -> mongoDBService.insertCalendarEvent());
 
-        calendarButton.setLayoutX(625);
-        calendarButton.setLayoutY(500);
-        layout.getChildren().add(calendarButton);
-
-        exitButton.setLayoutX(750);
-        exitButton.setLayoutY(10);
-        layout.getChildren().add(exitButton);
-
-        tasksButton.setLayoutX(100);
-        tasksButton.setLayoutY(500);
-        layout.getChildren().add(tasksButton);
-
-        shoppingListButton.setLayoutX(350);
-        shoppingListButton.setLayoutY(500);
-        layout.getChildren().add(shoppingListButton);
-
-        stage.setTitle("Desktop App");
-        Scene defaultScene = new Scene(layout, 800, 600); // layout changed from root
-        stage.setScene(defaultScene);
         stage.show();
     }
 

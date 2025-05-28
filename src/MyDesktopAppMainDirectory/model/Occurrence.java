@@ -69,9 +69,9 @@ public class Occurrence implements Event {
 
     @Override
     public String ifStillInProgress() {
-        System.out.println("Do You want to add another event?");
+        System.out.println("Do You want to add another event? Otherwise the document will be closed");
         setAnswer(choice.nextLine().trim().toLowerCase());
-        setDecision(getAnswer().substring(0,2));
+        setDecision(getAnswer());
         if(getDecision().equals("yes") || getDecision().startsWith("y")){
             return "yes";
         } else {
