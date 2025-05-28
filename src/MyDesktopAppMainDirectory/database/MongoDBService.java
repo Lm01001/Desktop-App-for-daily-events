@@ -179,30 +179,35 @@ public class MongoDBService {
         return gson.fromJson(json, entityType);
     }
 
-    public <T> List<T> findAll(Class<T> entityType) {
+    public <T> List<T> findAllActive(Class<T> entityType) {
         List<T> results = new ArrayList<>();
-
+        String mainDocKey;
         if(entityType.equals(Task.class)) {
             setCategory("task");
             setArrayAccessKey("task");
             setCollection("task");
+            mainDocKey = "task";
         } else if(entityType.equals(ShoppingList.class)) {
             setCategory("shoppingList");
             setArrayAccessKey("shoppingList");
             setCollection("shoppingList");
+            mainDocKey = "shoppingList";
         } else if(entityType.equals(ToDoCalendarActivity.class)) {
             setCategory("calendarEvent");
             setArrayAccessKey("calendarEvent");
             setCollection("calendarEvent");
+            mainDocKey = "pages";
         } else {
             throw new IllegalArgumentException("Unsupported entity type: " +
                     entityType.getName());
         }
         Document eventsToShow = getCollection().find().sort(Sorts.descending("_id")).first();
-        //ObjectId id = eventsToShow.getObjectId("_id");
-        FindIterable<Document> docToSearch = collection.find(Filters.eq("_id", eventsToShow.get("_id")));
+        assert eventsToShow != null; //??? sprawdzic czy potrzebne
+        ObjectId id = eventsToShow.getObjectId("_id");
+        FindIterable<Document> docToSearch = collection.find(Filters.eq("_id", id));
+
         for (Document doc : docToSearch) {
-            List<Document> task = (List<Document>) doc.get("pages");
+            List<Document> task = (List<Document>) doc.get(mainDocKey);
             if (task != null) {
                 for (Document eventDoc : task) {
                     String name = eventDoc.getString("task");

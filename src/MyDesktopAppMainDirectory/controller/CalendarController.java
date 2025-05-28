@@ -20,6 +20,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
@@ -39,7 +40,7 @@ public class CalendarController implements Initializable {
     MongoDBService mongoDBService;
     ToDoCalendarActivity toDoCalendarActivity;
     boolean checkIfCreated = false;
-
+    Popup popup;
 
     @FXML
     private Text year, month, day;
@@ -48,7 +49,7 @@ public class CalendarController implements Initializable {
     @FXML
     private Button returnButton, insertCalendarEvent, showTasks;
     @FXML
-    private Label datesLabel, warningLabel;
+    private Label datesLabel, warningLabel, popupForCalendar;
     @FXML
     private DatePicker datePick;
 
@@ -98,6 +99,7 @@ public class CalendarController implements Initializable {
         this.datePick.setValue(null);
         calendarActivities = new ArrayList<>();
         this.mongoDBService = new MongoDBService();
+        popup = new Popup();
         drawCalendar();
     }
 
@@ -114,6 +116,7 @@ public class CalendarController implements Initializable {
         calendar.getChildren().clear();
         drawCalendar();
     }
+
 
     private void drawCalendar() {
         year.setText(String.valueOf(dateFocus.getYear()));
@@ -234,12 +237,10 @@ public class CalendarController implements Initializable {
         this.toDoCalendarActivity = new ToDoCalendarActivity();
         ToDoCalendarActivity eventsDetails = toDoCalendarActivity.createAction();
         datesLabel.setVisible(false);
+
         eventsDetails.setChosenDate(dateString);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
         calendarActivities.add(eventsDetails);
-        /*toDoCalendarActivity = new ToDoCalendarActivity(eventsDetails.getPriority(),
-                eventsDetails.getName(), eventsDetails.getChosenDate(), eventsDetails.getDayOfTheWeekAsString(),
-                eventsDetails.getIndex(), eventsDetails.getDutifully(), eventsDetails.getHowImportant());*/
         LocalDate dateTime = LocalDate.parse(dateString, formatter);
         List<ToDoCalendarActivity> newActivities = calendarActivities.stream()
                 .filter(a -> {
@@ -256,6 +257,15 @@ public class CalendarController implements Initializable {
         datePick.setPromptText(datePick.getPromptText());
         if(!checkIfCreated) {
             this.checkIfCreated = true;
+        }
+        if(!popup.isShowing()) {
+            //popup.getContent().add(popupForCalendar);
+            popupForCalendar.setVisible(true);
+            popup.show(insertCalendarEvent,
+                    insertCalendarEvent.localToScreen(insertCalendarEvent.getBoundsInLocal()).getMinX(),
+                    insertCalendarEvent.localToScreen(insertCalendarEvent.getBoundsInLocal()).getMaxY());
+        } else {
+            popup.hide();
         }
     }
 
@@ -281,7 +291,7 @@ public class CalendarController implements Initializable {
 
    @FXML  //najwyzej sprawdzic czy overloading ok
    private List<ToDoCalendarActivity> showCalendarActivitiesMonth(ActionEvent event) {
-       List<ToDoCalendarActivity> activities = mongoDBService.findAll(ToDoCalendarActivity.class);
+       List<ToDoCalendarActivity> activities = mongoDBService.findAllActive(ToDoCalendarActivity.class);
        if(activities.isEmpty() && !checkIfCreated) {
            System.out.println("No added activities.");
            return null;
