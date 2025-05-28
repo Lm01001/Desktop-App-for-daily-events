@@ -83,16 +83,19 @@ public class Task extends List {
     }
 
     //Quartet used for creating a task excluding time, only name, status, importance (index -> automatic/incrementing after each task)
-    private static record Quartet(int index, String name, String howImportant, String status) {};
-    public Quartet quartetCreator(int index, String name, String howImportant, String status) {
-        return new Quartet(this.index, name, this.howImportant, this.status);
+    private static record Quartet(String date, String name, String howImportant, String status) {};
+    public Quartet quartetCreator(String date, String name, String howImportant, String status) {
+        return new Quartet(getHourAndMinutesAsAString(), name, this.howImportant, this.status);
     }
 
     //HashMap with time as a key, and quartet including task details as a value
-    private final HashMap<String, Quartet>tasks = new HashMap<>();
-    public void addHashMapValue() {
-        Quartet task = quartetCreator(getIndex(), getName(), getHowImportant(), getStatus());
-        tasks.put(getHourAndMinutesAsAString(), task);
+    private final HashMap<Integer, Quartet> tasks = new HashMap<>();
+    public HashMap<Integer, Quartet> getTasks() {
+        return tasks;
+    }
+    public  void addHashMapValue() {
+        Quartet task = quartetCreator(getHourAndMinutesAsAString(), getName(), getHowImportant(), getStatus());
+        tasks.put(getIndex(), task);
         setIndex(getIndex() + 1);
     }
 
@@ -147,8 +150,8 @@ public class Task extends List {
             }catch(NumberFormatException e){
                 System.out.println("Value not recognized. Please enter a valid number.");
             }
-            for(Map.Entry<String, Quartet> tasks : tasks.entrySet()) {
-                if(tasks.getValue().index() == taskCompletion) {
+            for(Map.Entry<Integer, Quartet> tasks : tasks.entrySet()) {
+                if(tasks.getKey() == taskCompletion) {
                     setStatus("Completed");
                     break;
                 }else{
@@ -167,10 +170,10 @@ public class Task extends List {
                 int tasksIndexToDelete = Integer.parseInt(choice.nextLine());
                 setDeleteTask(tasksIndexToDelete);
                 boolean foundIndex = false;
-                Iterator<Map.Entry<String, Quartet>> iterator = tasks.entrySet().iterator();
+                Iterator<Map.Entry<Integer, Quartet>> iterator = tasks.entrySet().iterator();
                 while (iterator.hasNext()) {
-                    Map.Entry<String, Quartet> entry = iterator.next();
-                    if (entry.getValue().index() == getDeleteTask()) {
+                    Map.Entry<Integer, Quartet> entry = iterator.next();
+                    if (entry.getKey() == getDeleteTask()) {
                         iterator.remove();
                         foundIndex = true;
                         break;
@@ -193,9 +196,9 @@ public class Task extends List {
             System.out.println("There are no tasks in the database.");
             return;
         }
-        System.out.println("Time     Tasks Information");
-        for(Map.Entry<String, Quartet> tasks : tasks.entrySet()) {
-            System.out.println(taskIndex + "       " + tasks.getKey() + "     " + tasks.getValue());
+        System.out.println("Index     Time  Tasks Information");
+        for(Map.Entry<Integer, Quartet> tasks : tasks.entrySet()) {
+            System.out.println(taskIndex + "       " + tasks.getValue());
         }
     }
 

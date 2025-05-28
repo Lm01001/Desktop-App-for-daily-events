@@ -94,12 +94,12 @@ public class Preview extends Application  {
         }
     }*/
 
-
+    //nie zmienia sie na gorze z powrotem na desktop app
     @Override
     public void start(Stage stage) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
                 ("/MyDesktopAppMainDirectory/view/MainView.fxml")));
-        Scene scene = new Scene(root);
+        Scene scene = new Scene(root, 800, 640);
         stage.setScene(scene);
         stage.setTitle("Desktop App");
         /*Pane layout = new Pane();
@@ -141,7 +141,9 @@ public class Preview extends Application  {
 
 
         tasksButton = new Button();
+        insertTask = new Button();
         tasksButton.setText("Tasks");
+        insertTask.setText("+");
         tasksButton.setOnAction(e -> {
             try {
                 Parent root2 = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
@@ -150,7 +152,7 @@ public class Preview extends Application  {
                 if(fxmlUrl == null)
                     throw new IllegalStateException("FXML file not found!");
                 Stage stage2 = (Stage) tasksButton.getScene().getWindow();
-                stage2.setScene(new Scene(root2));
+                stage2.setScene(new Scene(root2,800, 640));
                 stage2.setTitle("Task list");
                 stage2.show();
             } catch (IOException ex) {
@@ -171,7 +173,7 @@ public class Preview extends Application  {
                 if(fxmlUrl == null)
                     throw new IllegalStateException("FXML file not found!");
                 Stage stage2 = (Stage) calendarButton.getScene().getWindow();
-                stage2.setScene(new Scene(root2));
+                stage2.setScene(new Scene(root2, 800, 640));
                 stage2.setTitle("Calendar");
                 stage2.show();
             } catch (IOException ex) {

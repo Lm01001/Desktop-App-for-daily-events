@@ -27,13 +27,28 @@ public class Preview2 extends Application {
         exitButton.setOnAction(e -> Platform.exit());
 
         /*exportButton.setOnAction(e -> {
-            // tutaj implementuj eksport
+
         });*/
 
         shoppingListButton.setOnAction(e -> switchScene
                 (e, "/MyDesktopAppMainDirectory/view/ShoppingListView.fxml"));
-        tasksButton.setOnAction(e -> switchScene
-                (e, "/MyDesktopAppMainDirectory/view/TaskView.fxml"));
+
+        tasksButton.setOnAction(e -> {
+            try {
+                URL fxmlUrl = getClass().getResource("/MyDesktopAppMainDirectory/view/TaskView.fxml");
+                if(fxmlUrl == null)
+                    throw new IllegalStateException("FXML file not found!");
+                Parent root = FXMLLoader.load(fxmlUrl);
+                Stage stage = (Stage) tasksButton.getScene().getWindow();
+                Scene scene = new Scene(root);
+                stage.setTitle("Tasks");
+                stage.setScene(scene);
+                stage.show();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
         calendarButton.setOnAction(e -> {
             try {
                 URL fxmlUrl = getClass().getResource("/MyDesktopAppMainDirectory/view/CalendarView.fxml");
@@ -55,8 +70,10 @@ public class Preview2 extends Application {
     public void start(Stage stage) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/MyDesktopAppMainDirectory/view/MainView.fxml")));
         stage.setTitle("Desktop App");
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root,800, 640);
         stage.setScene(scene);
+
+
         stage.show();
     }
 
@@ -64,8 +81,9 @@ public class Preview2 extends Application {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(fxmlPath)));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
+            Scene scene = new Scene(root, 800, 640);
             stage.setScene(scene);
+
             stage.show();
         } catch (IOException ex) {
             ex.printStackTrace();

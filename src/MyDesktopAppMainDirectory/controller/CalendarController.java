@@ -79,7 +79,9 @@ public class CalendarController implements Initializable {
                 Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
                         ("/MyDesktopAppMainDirectory/view/MainView.fxml")));
                 Stage stage = (Stage) returnButton.getScene().getWindow();
-                stage.setScene(new Scene(root));
+                stage.setScene(new Scene(root, 800, 640));
+                stage.setTitle("Desktop App");
+                stage.setResizable(false);
                 stage.show();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
@@ -209,9 +211,6 @@ public class CalendarController implements Initializable {
             calendarActivityBox.getChildren().add(text);
         }
         calendarActivityBox.setStyle("-fx-background-color:LIGHTGRAY");
-        /*calendarActivityBox.setPrefWidth(rectangleWidth * 0.8);
-        calendarActivityBox.setPrefHeight(rectangleHeight * 0.65);*/
-        //calendarActivityBox.setTranslateY(rectangleHeight * 0.25);
         stackPane.getChildren().removeIf(node -> node instanceof VBox);
         stackPane.getChildren().addFirst(calendarActivityBox);
         /*if(!this.toDoCalendarActivity.ifStillInProgress().equals("yes")) {
