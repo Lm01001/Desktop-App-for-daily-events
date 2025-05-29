@@ -1,5 +1,10 @@
 package MyDesktopAppMainDirectory.model;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
+import org.javatuples.Quartet;
+
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -83,20 +88,30 @@ public class Task extends List {
     }
 
     //Quartet used for creating a task excluding time, only name, status, importance (index -> automatic/incrementing after each task)
-    private static record Quartet(String date, String name, String howImportant, String status) {};
+    /*private*/public record Quartet(String date, String name, String howImportant, String status) {};
+    public Quartet quartetForTask;
+
     public Quartet quartetCreator(String date, String name, String howImportant, String status) {
-        return new Quartet(getHourAndMinutesAsAString(), name, this.howImportant, this.status);
+        date = this.getHourAndMinutesAsAString();
+        howImportant = this.getHowImportant();
+        status = this.getStatus();
+        this.quartetForTask = new Quartet(date, name, howImportant, status);
+        return quartetForTask;
+    }
+    public Quartet getQuartet(){
+        return this.quartetForTask;
     }
 
     //HashMap with time as a key, and quartet including task details as a value
-    private final HashMap<Integer, Quartet> tasks = new HashMap<>();
-    public HashMap<Integer, Quartet> getTasks() {
+    /*private final*/public HashMap<String, Quartet> tasks = new HashMap<>();
+    public HashMap<String, Quartet> getTasks() {
         return tasks;
     }
-    public  void addHashMapValue() {
+    public  HashMap<String, Quartet> addHashMapValue() {
         Quartet task = quartetCreator(getHourAndMinutesAsAString(), getName(), getHowImportant(), getStatus());
-        tasks.put(getIndex(), task);
+        tasks.put(String.valueOf(getIndex()), task);
         setIndex(getIndex() + 1);
+        return tasks;
     }
 
     public Task(int priority, String name, int index, String nowAsAString, String howImportant,
@@ -150,8 +165,8 @@ public class Task extends List {
             }catch(NumberFormatException e){
                 System.out.println("Value not recognized. Please enter a valid number.");
             }
-            for(Map.Entry<Integer, Quartet> tasks : tasks.entrySet()) {
-                if(tasks.getKey() == taskCompletion) {
+            for(Map.Entry<String, Quartet> tasks : tasks.entrySet()) {
+                if(tasks.getKey() == String.valueOf(taskCompletion)) {
                     setStatus("Completed");
                     break;
                 }else{
@@ -162,7 +177,7 @@ public class Task extends List {
     }
 
     //Deleting unwanted tasks, when creating or editing
-    public void deleteTask()
+    /*public void deleteTask()
     {
         while(true) {
             try {
@@ -170,9 +185,9 @@ public class Task extends List {
                 int tasksIndexToDelete = Integer.parseInt(choice.nextLine());
                 setDeleteTask(tasksIndexToDelete);
                 boolean foundIndex = false;
-                Iterator<Map.Entry<Integer, Quartet>> iterator = tasks.entrySet().iterator();
+                Iterator<Map.Entry<String, Quartet>> iterator = tasks.entrySet().iterator();
                 while (iterator.hasNext()) {
-                    Map.Entry<Integer, Quartet> entry = iterator.next();
+                    Map.Entry<String, Quartet> entry = iterator.next();
                     if (entry.getKey() == getDeleteTask()) {
                         iterator.remove();
                         foundIndex = true;
@@ -187,7 +202,7 @@ public class Task extends List {
                 System.out.println("Value not recognized. Please enter a valid number.");
             }
         }
-    }
+    }*/
 
     //Showing already existing tasks before adding them to the db
     public void showActiveTasks() {
@@ -197,7 +212,7 @@ public class Task extends List {
             return;
         }
         System.out.println("Index     Time  Tasks Information");
-        for(Map.Entry<Integer, Quartet> tasks : tasks.entrySet()) {
+        for(Map.Entry<String, Quartet> tasks : tasks.entrySet()) {
             System.out.println(taskIndex + "       " + tasks.getValue());
         }
     }

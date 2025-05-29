@@ -9,7 +9,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -18,9 +17,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.javatuples.Quartet;
-import org.javatuples.Triplet;
-
-import javax.management.StringValueExp;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -30,19 +26,15 @@ public class TaskController implements Initializable {
     HashMap<String, Quartet<StackPane, StackPane, StackPane, StackPane>> fullRow = new HashMap<>();
     Task task;
     MongoDBService mongoDBService;
-    int amountOfTasks;
+    int amountOfTasks, rowHelper, rowHelperDeleting;
+    Rectangle rectangleIndex, rectangleDate, rectangleTask, rectangleFrame;
 
     @FXML
     private Button addButton, returnButton;
     @FXML
     private FlowPane taskList;
+    private StackPane rectangleStackPane;
 
-
-    @FXML
-    private void onAddClicked() {
-        System.out.println("Add button clicked!");
-        // Logic to handle adding a shopping list item
-    }
 
     @FXML
     private void returnButton(ActionEvent event) throws IOException {
@@ -67,13 +59,18 @@ public class TaskController implements Initializable {
         Locale.setDefault(Locale.ENGLISH);
         this.mongoDBService = new MongoDBService();
         this.amountOfTasks = 0;
+        this.rowHelper = 49;
+        this.rowHelperDeleting = 49;
+        this.rectangleFrame = new Rectangle();
+        this.rectangleStackPane = new StackPane();
+        this.rectangleDate = new Rectangle();
+        this.rectangleIndex = new Rectangle();
+        this.rectangleTask = new Rectangle();
         drawBox();
     }
 
     //Creating blank table and saving stackPanes inside a hashmap
     private void drawBox() {
-        StackPane rectangleStackPane = new StackPane();
-        Rectangle rectangleFrame = new Rectangle();
         List<StackPane> helperList = new ArrayList<StackPane>();
 
         double strokeWidth = 2.0;
@@ -89,21 +86,21 @@ public class TaskController implements Initializable {
         rectangleFrame.setStrokeWidth(strokeWidth);
 
         Text textIndex = new Text("Index");
-            rectangleFrame.setWidth(rectangleWidthIndex);
+            this.rectangleFrame.setWidth(rectangleWidthIndex);
             rectangleStackPane = createBoxCell(rectangleFrame.getWidth(), rectangleFrame.getHeight(), rectangleFrame.getStroke(), rectangleFrame.getFill(), textIndex);
             taskList.getChildren().add(rectangleStackPane);
         Text textDate = new Text("Date");
-            rectangleFrame.setWidth(rectangleWidthDate);
+            this.rectangleFrame.setWidth(rectangleWidthDate);
             rectangleStackPane = createBoxCell(rectangleFrame.getWidth(), rectangleFrame.getHeight(), rectangleFrame.getStroke(), rectangleFrame.getFill(), textDate);
             taskList.getChildren().add(rectangleStackPane);
             helperList.add(rectangleStackPane);
         Text textTask = new Text("Task");
-            rectangleFrame.setWidth(rectangleWidthTask);
+            this.rectangleFrame.setWidth(rectangleWidthTask);
             rectangleStackPane = createBoxCell(rectangleFrame.getWidth(), rectangleFrame.getHeight(), rectangleFrame.getStroke(), rectangleFrame.getFill(), textTask);
             helperList.add(rectangleStackPane);
             taskList.getChildren().add(rectangleStackPane);
         Text textHowImportant = new Text("Importance");
-            rectangleFrame.setWidth(rectangleWidthDate);
+            this.rectangleFrame.setWidth(rectangleWidthDate);
             rectangleStackPane = createBoxCell(rectangleFrame.getWidth(), rectangleFrame.getHeight(), rectangleFrame.getStroke(), rectangleFrame.getFill(), textHowImportant);
             helperList.add(rectangleStackPane);
             taskList.getChildren().add(rectangleStackPane);
@@ -114,27 +111,20 @@ public class TaskController implements Initializable {
 
         Text blankFulfillment = new Text();
         Text indexAsText;
-        rectangleFrame.setStroke(Color.BLACK);
-        rectangleFrame.setFill(Color.TRANSPARENT);
-        Rectangle rectangleDate = new Rectangle();
-        rectangleDate.setStrokeWidth(strokeWidthTaskFrame);
-        rectangleDate.setHeight(rectangleHeight);
-        rectangleDate.setWidth(rectangleWidthDate);
+        this.rectangleFrame.setStroke(Color.BLACK);
+        this.rectangleFrame.setFill(Color.TRANSPARENT);
 
-        Rectangle rectangleIndex = new Rectangle();
-        rectangleIndex.setStrokeWidth(strokeWidthTaskFrame);
-        rectangleIndex.setHeight(rectangleHeight);
-        rectangleIndex.setWidth(rectangleWidthIndex);
+        this.rectangleDate.setStrokeWidth(strokeWidthTaskFrame);
+        this.rectangleDate.setHeight(rectangleHeight);
+        this.rectangleDate.setWidth(rectangleWidthDate);
 
-        Rectangle rectangleTask = new Rectangle();
-        rectangleTask.setStrokeWidth(strokeWidthTaskFrame);
-        rectangleTask.setHeight(rectangleHeight);
-        rectangleTask.setWidth(rectangleWidthTask);
+        this.rectangleIndex.setStrokeWidth(strokeWidthTaskFrame);
+        this.rectangleIndex.setHeight(rectangleHeight);
+        this.rectangleIndex.setWidth(rectangleWidthIndex);
 
-        Rectangle rectangleIfCompleted = new Rectangle();
-        rectangleIfCompleted.setStrokeWidth(strokeWidth);
-        rectangleIfCompleted.setHeight(rectangleHeight);
-        rectangleIfCompleted.setWidth(rectangleWidthDate);
+        this.rectangleTask.setStrokeWidth(strokeWidthTaskFrame);
+        this.rectangleTask.setHeight(rectangleHeight);
+        this.rectangleTask.setWidth(rectangleWidthTask);
 
         chartRow = Quartet.fromCollection(helperList);
         this.fullRow.put("Index", chartRow);
@@ -179,15 +169,85 @@ public class TaskController implements Initializable {
 
     @FXML
     private void insertTask(ActionEvent event) throws IOException {
-        List<Task> taskList1 = new ArrayList<>();
         this.task = new Task();
         Task tasks = task.createTask();
-        taskList1.add(tasks);
+        this.amountOfTasks++;
+        //Adding provided task details as values in hashMap
         tasks.quartetCreator(tasks.getNowAsAString(), tasks.getName(), tasks.getHowImportant(), tasks.getStatus());
-        tasks.addHashMapValue();
+        HashMap<String, Task.Quartet> hashMapForTask;
+        //Creating hashMap using created quartet
+        hashMapForTask = tasks.addHashMapValue();
+        Task.Quartet quartetFromHashMap;
+        quartetFromHashMap = hashMapForTask.get("0");
+        Text textInsideCell = new Text(quartetFromHashMap.date());
+        //Adding date
+        taskList.getChildren().remove(taskList.getChildren().size() - (rowHelper));
+        rectangleStackPane = createBoxCell(rectangleDate.getWidth(), rectangleDate.getHeight(), rectangleFrame.getStroke(),
+                rectangleFrame.getFill(),textInsideCell);
+        taskList.getChildren().add(taskList.getChildren().size() - (rowHelper - 1),rectangleStackPane);
+        //Adding task
+        textInsideCell = new Text(quartetFromHashMap.name());
+        taskList.getChildren().remove(taskList.getChildren().size() - (rowHelper - 1));
+        rectangleStackPane = createBoxCell(rectangleTask.getWidth(), rectangleTask.getHeight(), rectangleFrame.getStroke(),
+                rectangleFrame.getFill(),textInsideCell);
+        taskList.getChildren().add(taskList.getChildren().size() - (rowHelper - 2),rectangleStackPane);
+        //Adding importance
+        textInsideCell = new Text(quartetFromHashMap.howImportant());
+        taskList.getChildren().remove(taskList.getChildren().size() - (rowHelper - 2));
+        rectangleStackPane = createBoxCell(rectangleDate.getWidth(), rectangleDate.getHeight(), rectangleFrame.getStroke(),
+                rectangleFrame.getFill(),textInsideCell);
+        taskList.getChildren().add(taskList.getChildren().size() - (rowHelper - 3),rectangleStackPane);
+        //Adding status
+        textInsideCell = new Text(quartetFromHashMap.status());
+        taskList.getChildren().remove(taskList.getChildren().size() - (rowHelper - 3));
+        rectangleStackPane = createBoxCell(rectangleDate.getWidth(), rectangleDate.getHeight(), rectangleFrame.getStroke(),
+                rectangleFrame.getFill(),textInsideCell);
+        taskList.getChildren().add(taskList.getChildren().size() - (rowHelper - 4),rectangleStackPane);
 
 
+        this.rowHelperDeleting = rowHelperDeleting - 5;
+        this.rowHelper = rowHelper - 5;
+
+
+        //for checking
+        System.out.println(rowHelper);
         System.out.println(tasks.getTasks());
+        System.out.println(quartetFromHashMap);
+    }
 
+    @FXML
+    private void deleteTask(ActionEvent event) throws IOException {
+        Text blankCell = new Text("");
+        //Adding date
+        taskList.getChildren().remove(taskList.getChildren().size() - (rowHelperDeleting));
+        rectangleStackPane = createBoxCell(rectangleDate.getWidth(), rectangleDate.getHeight(), rectangleFrame.getStroke(),
+                rectangleFrame.getFill(),blankCell);
+        taskList.getChildren().add(taskList.getChildren().size() - (rowHelperDeleting - 1),rectangleStackPane);
+        //Adding task
+        taskList.getChildren().remove(taskList.getChildren().size() - (rowHelperDeleting - 1));
+        rectangleStackPane = createBoxCell(rectangleTask.getWidth(), rectangleTask.getHeight(), rectangleFrame.getStroke(),
+                rectangleFrame.getFill(), blankCell);
+        taskList.getChildren().add(taskList.getChildren().size() - (rowHelperDeleting - 2),rectangleStackPane);
+        //Adding importance
+        taskList.getChildren().remove(taskList.getChildren().size() - (rowHelperDeleting - 2));
+        rectangleStackPane = createBoxCell(rectangleDate.getWidth(), rectangleDate.getHeight(), rectangleFrame.getStroke(),
+                rectangleFrame.getFill(), blankCell);
+        taskList.getChildren().add(taskList.getChildren().size() - (rowHelperDeleting - 3),rectangleStackPane);
+        //Adding status
+        taskList.getChildren().remove(taskList.getChildren().size() - (rowHelperDeleting - 3));
+        rectangleStackPane = createBoxCell(rectangleDate.getWidth(), rectangleDate.getHeight(), rectangleFrame.getStroke(),
+                rectangleFrame.getFill(), blankCell);
+        taskList.getChildren().add(taskList.getChildren().size() - (rowHelperDeleting - 4),rectangleStackPane);
+
+        this.amountOfTasks--;
+
+        if(amountOfTasks > 0) {
+            this.rowHelperDeleting = rowHelperDeleting + 5;
+            this.rowHelper = rowHelper + 5;
+        } else {
+            System.out.println("All tasks deleted!");
+            this.rowHelperDeleting = 49;
+            this.rowHelper = 49;
+        }
     }
 }
