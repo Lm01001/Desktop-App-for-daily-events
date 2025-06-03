@@ -1,7 +1,6 @@
 package MyDesktopAppMainDirectory.controller;
 import MyDesktopAppMainDirectory.database.MongoDBService;
 import MyDesktopAppMainDirectory.model.Task;
-import MyDesktopAppMainDirectory.model.ToDoCalendarActivity;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,7 +29,7 @@ public class TaskController implements Initializable {
     Rectangle rectangleIndex, rectangleDate, rectangleTask, rectangleFrame;
 
     @FXML
-    private Button addButton, returnButton;
+    private Button returnButton;
     @FXML
     private FlowPane taskList;
     private StackPane rectangleStackPane;

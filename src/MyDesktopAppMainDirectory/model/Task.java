@@ -107,7 +107,7 @@ public class Task extends List {
     public HashMap<String, Quartet> getTasks() {
         return tasks;
     }
-    public  HashMap<String, Quartet> addHashMapValue() {
+    public HashMap<String, Quartet> addHashMapValue() {
         Quartet task = quartetCreator(getHourAndMinutesAsAString(), getName(), getHowImportant(), getStatus());
         tasks.put(String.valueOf(getIndex()), task);
         setIndex(getIndex() + 1);

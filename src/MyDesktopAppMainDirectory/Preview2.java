@@ -30,8 +30,22 @@ public class Preview2 extends Application {
 
         });*/
 
-        shoppingListButton.setOnAction(e -> switchScene
-                (e, "/MyDesktopAppMainDirectory/view/ShoppingListView.fxml"));
+        shoppingListButton.setOnAction(e -> {
+            try {
+                URL fxmlUrl = getClass().getResource("/MyDesktopAppMainDirectory/view/ShoppingListView.fxml");
+                if(fxmlUrl == null)
+                    throw new IllegalStateException("FXML file not found!");
+                Parent root = FXMLLoader.load(fxmlUrl);
+                Stage stage = (Stage) calendarButton.getScene().getWindow();
+                Scene scene = new Scene(root);
+                stage.setTitle("Shopping List");
+                stage.setScene(scene);
+                stage.show();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+
+        });
 
         tasksButton.setOnAction(e -> {
             try {

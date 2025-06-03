@@ -133,6 +133,13 @@ public class Preview extends Application  {
             try {
                 Parent root2 = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
                         ("/MyDesktopAppMainDirectory/view/ShoppingListView.fxml")));
+                URL fxmlUrl = getClass().getResource("/MyDesktopAppMainDirectory/view/ShoppingListView.fxml");
+                if(fxmlUrl == null)
+                    throw new IllegalStateException("FXML file not found!");
+                Stage stage2 = (Stage) tasksButton.getScene().getWindow();
+                stage2.setScene(new Scene(root2,800, 640));
+                stage2.setTitle("Shopping list");
+                stage2.show();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -180,8 +187,6 @@ public class Preview extends Application  {
                 throw new RuntimeException(ex);
             }
         });
-        //insertCalendarEvent.setOnAction(e -> mongoDBService.insertCalendarEvent());
-
         stage.show();
     }
 

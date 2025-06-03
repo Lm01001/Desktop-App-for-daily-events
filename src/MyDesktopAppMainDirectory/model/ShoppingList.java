@@ -24,11 +24,21 @@ public class ShoppingList extends Product {
     }
 
     private boolean bought = false;
-    public boolean getBought() {
+    public boolean getBoughtBoolean() {
         return bought;
     }
+    public String getBought() {
+        if(bought){
+            return "Bought";
+        } else {
+            return "Not bought";
+        }
+    }
+    /*public void setBought(String bought) {
+            this.bought = getBought().equals(bought);
+    }*/
     public void setBought(boolean bought) {
-            this.bought = bought;
+        this.bought = bought;
     }
 
     private String status = "To buy";
@@ -55,19 +65,41 @@ public class ShoppingList extends Product {
         this.answer = answer;
     }
 
-    private static record Quartet(Integer priority, String name, Integer amount, boolean bought) {};
-    private Quartet quartetCreator(Integer priority, String name, Integer amount, boolean bought) {
-        return new Quartet(priority , name, amount, this.bought);
+    private String howImportant = "Optional";
+    public String getHowImportant() {
+        if(getPriority() == 1) {
+            this.howImportant = "Low priority";
+        } else if(getPriority() == 2) {
+            this.howImportant = "Optional, to do";
+        } else {
+            this.howImportant = "Very important";
+        }
+        return howImportant;
     }
 
-    private final HashMap<Integer, Quartet> finalProduct = new HashMap<>();
-    public void addHashMapValue() {
-        Quartet product = quartetCreator(getPriority(), getName(), getAmount(), bought);
+    public record Quartet(String priority, String name, String amount, String bought) {};
+    public Quartet quartetForProduct;
+    public Quartet quartetCreator(String priority, String name, String amount, String bought) {
+        priority = getHowImportant();
+        name = getName();
+        amount = getAmountString();
+        bought = getBought();
+        this.quartetForProduct = new Quartet(priority, name, amount, bought);
+        return quartetForProduct;
+    }
+    public Quartet getQuartetForProduct() {
+        return quartetForProduct;
+    }
+
+    public HashMap<Integer, Quartet> finalProduct = new HashMap<>();
+    public HashMap<Integer, Quartet> addHashMapValue() {
+        Quartet product = quartetCreator(getHowImportant(), getName(), getAmountString(), getBought());
         finalProduct.put(getProductsIndex(), product);
         setProductsIndex(getProductsIndex() + 1);
+        return finalProduct;
     }
 
-    public ShoppingList(int priority, String name, int amount, String status, int index) {
+    public ShoppingList(int priority, String name, String amount, String status, int index) {
         super(priority, name, amount);
         this.status = status;
         this.index = index;
@@ -75,7 +107,7 @@ public class ShoppingList extends Product {
 
     //No-argument constructor to initialize an object in Db class avoiding NullPointerException
     public ShoppingList() {
-        super(0, "Default name", 0);
+        super(0, "Default name", "0");
         this.status = "Default status";
         this.index = 0;
     }
@@ -85,17 +117,17 @@ public class ShoppingList extends Product {
         super.setName(getName());
         super.setAmount(getAmount());
         ShoppingList shoppingList;
-        if (getBought()) {
+        if (getBoughtBoolean()) {
             setStatus("Bought");
             addHashMapValue();
-            shoppingList = new ShoppingList(getPriority(), getName(), getAmount(), status, index);
+            shoppingList = new ShoppingList(getPriority(), getName(), getAmountString(), status, index);
             setProductsIndex(getProductsIndex() + 1);
             setIndex(getIndex() + 1);
-            setBought(false);
-            setStatus("To buy");
+            //setBought(false);
+            //setStatus("To buy");
         } else {
             addHashMapValue();
-            shoppingList = new ShoppingList(getPriority(), getName(), getAmount(), status, index);
+            shoppingList = new ShoppingList(getPriority(), getName(), getAmountString(), status, index);
             setProductsIndex(getProductsIndex() + 1);
             setIndex(getIndex() + 1);
         }
@@ -118,27 +150,5 @@ public class ShoppingList extends Product {
             }
         }
         System.out.println("Item deleted successfully.");
-    }
-
-    public void ifBought() {     //Checking item, if already bought (used if editing existing list)
-        System.out.println("Select index of a product You've already bought: ");
-        while(true){
-            try{
-                this.productsIndex = Integer.parseInt(choice.nextLine());
-                if(finalProduct.containsKey(productsIndex)){
-                    setBought(true);
-                    setStatus("Bought");
-                    finalProduct.put(productsIndex, quartetCreator(getPriority(), getName(), getAmount(), bought));
-                    ShoppingList sl = new ShoppingList(getPriority(), getName(), getAmount(), status, productsIndex);
-                    setBought(false);
-                    setStatus("To buy");
-                    break;
-                }else{
-                    System.out.println("Index not found. Please enter a valid number.");
-                }
-            }catch(NumberFormatException e){
-                    System.out.println("Value not recognized. Please enter a valid number.");
-            }
-        }
     }
 }

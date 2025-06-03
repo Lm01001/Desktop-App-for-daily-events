@@ -40,7 +40,7 @@ public class CalendarController implements Initializable {
     MongoDBService mongoDBService;
     ToDoCalendarActivity toDoCalendarActivity;
     boolean checkIfCreated = false;
-    Popup popup;
+    //Popup popup;
 
     @FXML
     private Text year, month, day;

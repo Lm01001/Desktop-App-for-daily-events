@@ -8,10 +8,14 @@ public class Product extends List {
     public int getAmount(){
         return amount;
     }
+    private String amountAsString = String.valueOf(getAmount());
+    public String getAmountString(){
+        return amountAsString;
+    }
 
-    public Product(int priority, String name, int amount) {
+    public Product(int priority, String name, String amount) {
         super(priority, name);
-        this.amount = amount;
+        this.amountAsString = amount;
     }
 
     //Extra no-argument constructor as a helper for ShoppingList inside Db class
