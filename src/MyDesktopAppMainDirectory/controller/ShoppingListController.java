@@ -24,6 +24,7 @@ import java.util.*;
 public class ShoppingListController implements Initializable {
     Quartet<StackPane, StackPane, StackPane, StackPane> chartRow;
     HashMap<String, Quartet<StackPane, StackPane, StackPane, StackPane>> fullRow = new HashMap<>();
+    List<ShoppingList> shoppingListsToDB;
     ShoppingList shoppingList;
     MongoDBService mongoDBService;
     int amountOfTasks, rowHelper, rowHelperDeleting;
@@ -66,6 +67,8 @@ public class ShoppingListController implements Initializable {
         this.rectangleAmount = new Rectangle();
         this.rectangleIndex = new Rectangle();
         this.rectangleTask = new Rectangle();
+
+        shoppingListsToDB = new ArrayList<>();
         drawBox();
     }
 
@@ -165,6 +168,7 @@ public class ShoppingListController implements Initializable {
     private void insertProduct(ActionEvent event) throws IOException {
         this.shoppingList = new ShoppingList();
         ShoppingList finalProduct = shoppingList.addProduct();
+        shoppingListsToDB.add(finalProduct);
         this.amountOfTasks++;
         //Adding provided task details as values in hashMap
         finalProduct.quartetCreator(finalProduct.getHowImportant(), finalProduct.getName(), finalProduct.getAmountString(), finalProduct.getBought());
@@ -191,7 +195,7 @@ public class ShoppingListController implements Initializable {
         rectangleStackPane = createBoxCell(rectangleAmount.getWidth(), rectangleAmount.getHeight(), rectangleFrame.getStroke(),
                 rectangleFrame.getFill(),textInsideCell);
         shoppingListPane.getChildren().add(shoppingListPane.getChildren().size() - (rowHelper - 13),rectangleStackPane);
-
+        this.mongoDBService.insertShoppingList(shoppingListsToDB);
 
         this.rowHelperDeleting = rowHelperDeleting - 4;
         this.rowHelper = rowHelper - 4;

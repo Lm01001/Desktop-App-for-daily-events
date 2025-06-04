@@ -80,13 +80,13 @@ public class MongoDBService {
         this.arrayAccessKey = arrayAccessKey;
     }
 
-    public void insertShoppingList() {
+    public void insertShoppingList(List<ShoppingList> shoppingList) {
         Document mainDocWithAShoppingList = new Document("category", "shoppingList")
                 .append("index", getShoppingListId());
         setCollection("shoppingList");
         List<Document> arrayForShoppingLists = new ArrayList<>();
 
-        boolean addingInProgress = true;
+        /*boolean addingInProgress = true;
         while(addingInProgress) {
             ShoppingList shoppinglist = new ShoppingList();
             shoppinglist.addProduct();
@@ -97,6 +97,13 @@ public class MongoDBService {
             if(!shoppinglist.ifStillInProgress().equals("yes")) {
                 addingInProgress = false;
             }
+        }*/
+
+        for(ShoppingList shoppingProducts : shoppingList) {
+            Document newShoppingList = new Document("category", "shoppingList " + shoppingProducts.getIndex()).append("product",
+                            shoppingProducts.getName()).append("amount", shoppingProducts.getAmount()).append("priority", shoppingProducts.getPriority()).
+                    append("status", shoppingProducts.getStatus());
+            arrayForShoppingLists.add(newShoppingList);
         }
         mainDocWithAShoppingList.append("shoppingList", arrayForShoppingLists);
         collection.insertOne(mainDocWithAShoppingList);
@@ -128,7 +135,7 @@ public class MongoDBService {
         setCollection("task");
         List<Document> arrayForTasks = new ArrayList<>();
 
-        boolean addingInProgress = true;
+        /*boolean addingInProgress = true;
         while(addingInProgress) {
             Task task = new Task();
             task.createTask();
@@ -138,6 +145,13 @@ public class MongoDBService {
             if(!task.ifStillInProgress().equals("yes")) {
                 addingInProgress = false;
             }
+        }*/
+
+        for(Task task : tasks) {
+            Document newTask = new Document("category", "task").append("index", task.getIndex()).append("time", task.getTasksTime()).
+                    append("name", task.getName()).append("importance", task.getHowImportant()).append("status", task.getStatus());
+            arrayForTasks.add(newTask);
+            task.setIndex(getTaskId() + 1);
         }
         mainDocWithATask.append("task", arrayForTasks);
         collection.insertOne(mainDocWithATask);

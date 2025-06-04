@@ -21,26 +21,21 @@ public class Task extends List {
         return nowAsAString;
     }
 
-    private String tasksTime = getNowAsAString();
+    private String tasksTime = "";
     public String getTasksTime() {
         return tasksTime;
-    }
-    public void setTasksTime(String tasksTime) {
-        this.tasksTime = tasksTime;
-    }
-
-    String chosenTime;
-    public String getChosenTime() {
-        return chosenTime;
     }
 
     private final LocalTime hourAndMinutes = LocalTime.of(now.getHour(), now.getMinute());
     /*public LocalTime getHourAndMinutes() {
         return hourAndMinutes;
     }*/
-    private final String hourAndMinutesAsAString = hourAndMinutes.toString();
+    private String hourAndMinutesAsAString = hourAndMinutes.toString();
     public String getHourAndMinutesAsAString() {
         return hourAndMinutesAsAString;
+    }
+    public void setHourAndMinutesAsString(String hourAndMinutesAsAString) {
+        this.hourAndMinutesAsAString = hourAndMinutesAsAString;
     }
 
     private int index = 0;
@@ -92,7 +87,7 @@ public class Task extends List {
     public Quartet quartetForTask;
 
     public Quartet quartetCreator(String date, String name, String howImportant, String status) {
-        date = this.getHourAndMinutesAsAString();
+        date = this.getTasksTime();
         howImportant = this.getHowImportant();
         status = this.getStatus();
         this.quartetForTask = new Quartet(date, name, howImportant, status);
@@ -114,12 +109,13 @@ public class Task extends List {
         return tasks;
     }
 
-    public Task(int priority, String name, int index, String nowAsAString, String howImportant,
-                String status, String hourAndMinutesAsAString) {
+    public Task(int priority, String name, int index, String howImportant,
+                String status, String time) {
         super(priority, name);
         this.index = index;
         this.howImportant = howImportant;
         this.status = status;
+        this.tasksTime = time;
     }
 
     public Task() {
@@ -134,11 +130,11 @@ public class Task extends List {
         System.out.println("Please set the time of the task you want to add.");
         System.out.println("Time should be provided in format HH:MM, otherwise " +
                 "time will be set to current time.");
-        chosenTime = choice.nextLine();
-        if(chosenTime.length() != 5 || chosenTime.charAt(2) != ':') {
-            this.chosenTime = getTasksTime();
+        String taskTime = choice.nextLine();
+        if(taskTime.length() != 5 || taskTime.charAt(2) != ':') {
+            this.tasksTime = getHourAndMinutesAsAString();
         } else {
-            setTasksTime(chosenTime);
+            this.tasksTime = taskTime;
         }
     }
 
@@ -166,7 +162,7 @@ public class Task extends List {
                 System.out.println("Value not recognized. Please enter a valid number.");
             }
             for(Map.Entry<String, Quartet> tasks : tasks.entrySet()) {
-                if(tasks.getKey() == String.valueOf(taskCompletion)) {
+                if(tasks.getKey().equals(String.valueOf(taskCompletion))) {
                     setStatus("Completed");
                     break;
                 }else{
@@ -218,10 +214,10 @@ public class Task extends List {
     }
 
     public Task createTask() {
-        super.setName(getName());
+        super.setName(1);
         super.setPriority(getPriority());
         setTasksTime();
-        return new Task(getPriority(), getName(), getIndex(), getNowAsAString(), getHowImportant(),
-                getStatus(), getHourAndMinutesAsAString());
+        return new Task(getPriority(), getName(), getIndex(), getHowImportant(),
+                getStatus(), getTasksTime());
     }
 }

@@ -42,10 +42,16 @@ public class List implements Event {
     }
 
     @Override
-    public void setName(String name) {      //Setting action's name
-        System.out.println("Please choose name of the product You want to add to the list: ");
-        this.name = choice.nextLine();
+    public void setName(int c) {      //Setting action's name
+        if(c == 0){
+            System.out.println("Please choose name of the product You want to add to the list: ");
+            this.name = choice.nextLine();
+        } else {
+            System.out.println("Please choose name of the task You want to add to the list: ");
+            this.name = choice.nextLine();
+        }
     }
+
 
     @Override
     public void setPriority(int priority) {

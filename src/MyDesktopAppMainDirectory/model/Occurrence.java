@@ -62,7 +62,7 @@ public class Occurrence implements Event {
     }
 
     @Override
-    public void setName(String name) {
+    public void setName(int c) {
         System.out.println("Please choose name for your event: ");
         this.name = choice.nextLine();
     }

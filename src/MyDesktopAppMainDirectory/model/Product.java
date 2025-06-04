@@ -30,6 +30,7 @@ public class Product extends List {
             try{
                 this.amount = Integer.parseInt(choice.nextLine());
                 if(this.amount <= 1000 && this.amount > 0) {
+                    setAmount(this.amount);
                     break;
                 }else{
                     System.out.print("Number not recognized or out of range, please try again: ");

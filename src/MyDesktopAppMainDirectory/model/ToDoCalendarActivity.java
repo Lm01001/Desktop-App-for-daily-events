@@ -111,7 +111,7 @@ public class ToDoCalendarActivity extends Calendar {
     }
 
     public ToDoCalendarActivity createAction() {
-        super.setName(getName());
+        super.setName(2);
         super.setPriority(getPriority());
         isMandatory();
         setDutifully(getIfMandatory());

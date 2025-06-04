@@ -24,6 +24,7 @@ public class TaskController implements Initializable {
     Quartet<StackPane, StackPane, StackPane, StackPane> chartRow;
     HashMap<String, Quartet<StackPane, StackPane, StackPane, StackPane>> fullRow = new HashMap<>();
     Task task;
+    List<Task> tasksToDB;
     MongoDBService mongoDBService;
     int amountOfTasks, rowHelper, rowHelperDeleting;
     Rectangle rectangleIndex, rectangleDate, rectangleTask, rectangleFrame;
@@ -65,6 +66,8 @@ public class TaskController implements Initializable {
         this.rectangleDate = new Rectangle();
         this.rectangleIndex = new Rectangle();
         this.rectangleTask = new Rectangle();
+
+        tasksToDB = new ArrayList<>();
         drawBox();
     }
 
@@ -171,8 +174,9 @@ public class TaskController implements Initializable {
         this.task = new Task();
         Task tasks = task.createTask();
         this.amountOfTasks++;
+        tasksToDB.add(tasks);
         //Adding provided task details as values in hashMap
-        tasks.quartetCreator(tasks.getNowAsAString(), tasks.getName(), tasks.getHowImportant(), tasks.getStatus());
+        tasks.quartetCreator(tasks.getTasksTime(), tasks.getName(), tasks.getHowImportant(), tasks.getStatus());
         HashMap<String, Task.Quartet> hashMapForTask;
         //Creating hashMap using created quartet
         hashMapForTask = tasks.addHashMapValue();
@@ -202,7 +206,7 @@ public class TaskController implements Initializable {
         rectangleStackPane = createBoxCell(rectangleDate.getWidth(), rectangleDate.getHeight(), rectangleFrame.getStroke(),
                 rectangleFrame.getFill(),textInsideCell);
         taskList.getChildren().add(taskList.getChildren().size() - (rowHelper - 4),rectangleStackPane);
-
+        this.mongoDBService.insertTask(tasksToDB);
 
         this.rowHelperDeleting = rowHelperDeleting - 5;
         this.rowHelper = rowHelper - 5;
