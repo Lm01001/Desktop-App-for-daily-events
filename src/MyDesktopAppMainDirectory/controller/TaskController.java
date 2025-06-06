@@ -1,6 +1,10 @@
 package MyDesktopAppMainDirectory.controller;
 import MyDesktopAppMainDirectory.database.MongoDBService;
 import MyDesktopAppMainDirectory.model.Task;
+import com.github.lgooddatepicker.components.TimePicker;
+import com.github.lgooddatepicker.components.TimePickerSettings;
+import com.github.lgooddatepicker.zinternaltools.DemoPanel;
+import com.github.lgooddatepicker.zinternaltools.InternalUtilities;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -8,6 +12,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -16,9 +22,18 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.javatuples.Quartet;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URL;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.List;
+
+import static com.github.lgooddatepicker.zinternaltools.InternalUtilities.getConstraints;
 
 public class TaskController implements Initializable {
     Quartet<StackPane, StackPane, StackPane, StackPane> chartRow;
@@ -28,12 +43,20 @@ public class TaskController implements Initializable {
     MongoDBService mongoDBService;
     int amountOfTasks, rowHelper, rowHelperDeleting;
     Rectangle rectangleIndex, rectangleDate, rectangleTask, rectangleFrame;
+    String chosenTime;
+
+    static DemoPanel panel;
+    final ZoneId zone = ZoneId.of("Europe/Warsaw");
+    final LocalTime time = ZonedDateTime.now(zone).toLocalTime();
+
 
     @FXML
-    private Button returnButton;
+    private Button returnButton, insertTaskButton, deleteTaskButton, timePick;
     @FXML
     private FlowPane taskList;
     private StackPane rectangleStackPane;
+    @FXML
+    private TimePicker taskTimePicker;
 
 
     @FXML
@@ -53,10 +76,50 @@ public class TaskController implements Initializable {
         //System.out.println("Button clicked");
     }
 
+
+    @FXML
+    private void choosingTasksTime(ActionEvent event) throws IOException {
+        JFrame frame = new JFrame();
+        frame.setTitle("Time Picker" );
+        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        TimePickerSettings timeSettings = new TimePickerSettings();
+        timeSettings.use24HourClockFormat();
+        timeSettings.initialTime = LocalTime.of(time.getHour(), time.getMinute());
+        timeSettings.generatePotentialMenuTimes(TimePickerSettings.TimeIncrement.FiveMinutes, time, null);
+        taskTimePicker = new TimePicker(timeSettings);
+
+        JButton okButton = new JButton("Ok"); //Confirming chosen time
+        okButton.addActionListener(e -> {
+            LocalTime selected = taskTimePicker.getTime();
+            if (selected != null) {
+                chosenTime = selected.toString();
+            }
+            frame.dispose();
+        });
+
+        JPanel timePanel = new JPanel();
+        timePanel.setLayout(new BoxLayout(timePanel, BoxLayout.Y_AXIS));
+        JLabel label = new JLabel("Choose time for your task:");
+        timePanel.add(okButton);
+        timePanel.add(label);
+
+        timePanel.add(taskTimePicker);
+        JScrollPane scrollPane = new JScrollPane(timePanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+        frame.getContentPane().add(scrollPane);
+        frame.setMinimumSize(new Dimension(250, 140));
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        insertTaskButton.setDisable(false);
+    }
+
     @FXML
     public void initialize(URL url, ResourceBundle rb) {
         //Only for making calendar (while choosing date) in english
         Locale.setDefault(Locale.ENGLISH);
+        this.task = new Task();
+        task.setIndex(0);
         this.mongoDBService = new MongoDBService();
         this.amountOfTasks = 0;
         this.rowHelper = 49;
@@ -66,6 +129,8 @@ public class TaskController implements Initializable {
         this.rectangleDate = new Rectangle();
         this.rectangleIndex = new Rectangle();
         this.rectangleTask = new Rectangle();
+
+        this.chosenTime = null;
 
         tasksToDB = new ArrayList<>();
         drawBox();
@@ -171,7 +236,12 @@ public class TaskController implements Initializable {
 
     @FXML
     private void insertTask(ActionEvent event) throws IOException {
-        this.task = new Task();
+        if(this.chosenTime == null) {
+            insertTaskButton.setDisable(true);
+            return;
+        } else {
+            task.setTasksTime(chosenTime);
+        }
         Task tasks = task.createTask();
         this.amountOfTasks++;
         tasksToDB.add(tasks);
@@ -207,7 +277,7 @@ public class TaskController implements Initializable {
                 rectangleFrame.getFill(),textInsideCell);
         taskList.getChildren().add(taskList.getChildren().size() - (rowHelper - 4),rectangleStackPane);
         this.mongoDBService.insertTask(tasksToDB);
-
+        this.chosenTime = null;
         this.rowHelperDeleting = rowHelperDeleting - 5;
         this.rowHelper = rowHelper - 5;
 
@@ -252,5 +322,20 @@ public class TaskController implements Initializable {
             this.rowHelperDeleting = 49;
             this.rowHelper = 49;
         }
+    }
+
+    private static GridBagConstraints getConstraints(int gridx, int gridy, int gridwidth) {
+        return getConstraints(gridx, gridy, gridwidth, GridBagConstraints.WEST);
+    }
+
+    private static GridBagConstraints getConstraints(
+            int gridx, int gridy, int gridwidth, int anchor) {
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.fill = GridBagConstraints.NONE;
+        gc.anchor = anchor;
+        gc.gridx = gridx;
+        gc.gridy = gridy;
+        gc.gridwidth = gridwidth;
+        return gc;
     }
 }

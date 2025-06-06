@@ -130,7 +130,7 @@ public class MongoDBService {
     }
 
     public void insertTask(List<Task> tasks) {
-        Document mainDocWithATask = new Document("category", "task")
+        Document mainDocWithATask = new Document("category", "task " + getTaskId())
                 .append("index", getTaskId());
         setCollection("task");
         List<Document> arrayForTasks = new ArrayList<>();
@@ -147,11 +147,12 @@ public class MongoDBService {
             }
         }*/
 
+        int counter = 1;
         for(Task task : tasks) {
-            Document newTask = new Document("category", "task").append("index", task.getIndex()).append("time", task.getTasksTime()).
+            Document newTask = new Document("category", "task " + counter++).append("time", task.getTasksTime()).
                     append("name", task.getName()).append("importance", task.getHowImportant()).append("status", task.getStatus());
             arrayForTasks.add(newTask);
-            task.setIndex(getTaskId() + 1);
+            task.setIndex(task.getIndex() + 1);
         }
         mainDocWithATask.append("task", arrayForTasks);
         collection.insertOne(mainDocWithATask);

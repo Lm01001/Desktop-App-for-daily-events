@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Button?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.FlowPane?>
@@ -16,6 +13,7 @@
 </VBox> -->
 
 <?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.control.DatePicker?>
 <AnchorPane prefHeight="640.0" prefWidth="800.0" style="-fx-background-color: #f2fafc;" xmlns="http://javafx.com/javafx/15.0.1"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="MyDesktopAppMainDirectory.controller.TaskController">
 
@@ -28,9 +26,11 @@
         </Text>
     </HBox>
     <HBox layoutX="14.0" layoutY="23.0" spacing="15.0">
-        <Button fx:id="insertTask" text="+" onAction="#insertTask" />
-        <Button fx:id="deleteTask" text="-" onAction="#deleteTask" />
+        <Button fx:id="insertTaskButton" text="+" onAction="#insertTask" />
+        <Button fx:id="deleteTaskButton" text="-" onAction="#deleteTask" />
     </HBox>
+
+
 
     <!--<HBox alignment="CENTER_LEFT" layoutX="50.0" layoutY="78.0" spacing="60.0">
         <children>
@@ -41,12 +41,15 @@
         <padding>
             <Insets right="9.0" />
         </padding>
-
     </HBox>
     <HBox alignment="CENTER_LEFT" layoutX="450.0" layoutY="90.0">
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Task" textAlignment="CENTER" />
     </HBox>-->
 
+
+    <HBox xmlns:fx="http://javafx.com/fxml" layoutX="650.0" layoutY="28.0" prefHeight="44.0">
+        <Button fx:id="timePick" text="Choose time" onAction="#choosingTasksTime" /><!--promptText="Enter time for a task"-->
+    </HBox>
     <HBox layoutX="697.5" layoutY="635.0"  prefHeight="44.0">
         <Button fx:id="returnButton" text="Return" onAction="#returnButton"/>
     </HBox>

@@ -25,6 +25,9 @@ public class Task extends List {
     public String getTasksTime() {
         return tasksTime;
     }
+    public void setTasksTime(String tasksTime) {
+        this.tasksTime = tasksTime;
+    }
 
     private final LocalTime hourAndMinutes = LocalTime.of(now.getHour(), now.getMinute());
     /*public LocalTime getHourAndMinutes() {
@@ -125,7 +128,7 @@ public class Task extends List {
         this.status = "Default";
     }
 
-    //Choosing task's time, default time is equal to current time
+    /*Choosing task's time, default time is equal to current time
     public void setTasksTime() {
         System.out.println("Please set the time of the task you want to add.");
         System.out.println("Time should be provided in format HH:MM, otherwise " +
@@ -136,7 +139,7 @@ public class Task extends List {
         } else {
             this.tasksTime = taskTime;
         }
-    }
+    }*/
 
     //Used during editing existing list, deleting/unchecking completed tasks
     public void ifCompleted() {
@@ -216,7 +219,6 @@ public class Task extends List {
     public Task createTask() {
         super.setName(1);
         super.setPriority(getPriority());
-        setTasksTime();
         return new Task(getPriority(), getName(), getIndex(), getHowImportant(),
                 getStatus(), getTasksTime());
     }
