@@ -50,7 +50,8 @@
     <HBox xmlns:fx="http://javafx.com/fxml" layoutX="650.0" layoutY="28.0" prefHeight="44.0">
         <Button fx:id="timePick" text="Choose time" onAction="#choosingTasksTime" /><!--promptText="Enter time for a task"-->
     </HBox>
-    <HBox layoutX="697.5" layoutY="635.0"  prefHeight="44.0">
+    <HBox layoutX="697.5" layoutY="635.0"  prefHeight="44.0" spacing="25.0">
+        <Button fx:id="showTasks" text="Show all tasks" onAction="#showAllTasks" />
         <Button fx:id="returnButton" text="Return" onAction="#returnButton"/>
     </HBox>
 </AnchorPane>

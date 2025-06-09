@@ -28,9 +28,9 @@ public class Product extends List {
         while(true){
             System.out.println("Please choose quantity of products you want to add (max up to 1000): ");
             try{
-                this.amount = Integer.parseInt(choice.nextLine());
-                if(this.amount <= 1000 && this.amount > 0) {
-                    setAmount(this.amount);
+                amount = Integer.parseInt(choice.nextLine());
+                if(amount <= 1000 && amount > 0) {
+                    this.amount = amount;
                     break;
                 }else{
                     System.out.print("Number not recognized or out of range, please try again: ");
@@ -39,5 +39,9 @@ public class Product extends List {
                 System.out.println("Choice not recognized. Please enter a valid number.");
             }
         }
+    }
+
+    public void setAmountString() {
+        this.amountAsString = String.valueOf(getAmount());
     }
 }

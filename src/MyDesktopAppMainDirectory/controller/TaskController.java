@@ -1,5 +1,6 @@
 package MyDesktopAppMainDirectory.controller;
 import MyDesktopAppMainDirectory.database.MongoDBService;
+import MyDesktopAppMainDirectory.model.ShoppingList;
 import MyDesktopAppMainDirectory.model.Task;
 import com.github.lgooddatepicker.components.TimePicker;
 import com.github.lgooddatepicker.components.TimePickerSettings;
@@ -44,6 +45,7 @@ public class TaskController implements Initializable {
     int amountOfTasks, rowHelper, rowHelperDeleting;
     Rectangle rectangleIndex, rectangleDate, rectangleTask, rectangleFrame;
     String chosenTime;
+    boolean checkIfCreated = false;
 
     static DemoPanel panel;
     final ZoneId zone = ZoneId.of("Europe/Warsaw");
@@ -51,7 +53,7 @@ public class TaskController implements Initializable {
 
 
     @FXML
-    private Button returnButton, insertTaskButton, deleteTaskButton, timePick;
+    private Button returnButton, insertTaskButton, showTasks, deleteTaskButton, timePick;
     @FXML
     private FlowPane taskList;
     private StackPane rectangleStackPane;
@@ -280,7 +282,9 @@ public class TaskController implements Initializable {
         this.chosenTime = null;
         this.rowHelperDeleting = rowHelperDeleting - 5;
         this.rowHelper = rowHelper - 5;
-
+        if(!checkIfCreated) {
+            this.checkIfCreated = true;
+        }
 
         //for checking
         System.out.println(rowHelper);
@@ -337,5 +341,15 @@ public class TaskController implements Initializable {
         gc.gridy = gridy;
         gc.gridwidth = gridwidth;
         return gc;
+    }
+
+    @FXML  //najwyzej sprawdzic czy overloading ok
+    private List<Task> showAllTasks(ActionEvent event) {
+        List<Task> tasks = mongoDBService.findAllActive(Task.class);
+        if(tasks.isEmpty() && !checkIfCreated) {
+            System.out.println("No added activities.");
+            return null;
+        }
+        return tasks;
     }
 }

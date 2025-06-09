@@ -115,7 +115,8 @@ public class ShoppingList extends Product {
     public ShoppingList addProduct() {
         super.setPriority(getPriority());
         super.setName(0);
-        super.setAmount(getAmount());
+        super.setAmount(0);
+        super.setAmountString();
         ShoppingList shoppingList;
         if (getBoughtBoolean()) {
             setStatus("Bought");

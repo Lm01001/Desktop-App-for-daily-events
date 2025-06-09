@@ -258,6 +258,7 @@ public class CalendarController implements Initializable {
         if(!checkIfCreated) {
             this.checkIfCreated = true;
         }
+        //mongoDBService.findAllActive(ToDoCalendarActivity.class);
         /*if(!popup.isShowing()) {
             //popup.getContent().add(popupForCalendar);
             popupForCalendar.setVisible(true);

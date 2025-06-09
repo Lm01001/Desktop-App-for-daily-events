@@ -1,6 +1,7 @@
 package MyDesktopAppMainDirectory.controller;
 import MyDesktopAppMainDirectory.database.MongoDBService;
 import MyDesktopAppMainDirectory.model.ShoppingList;
+import MyDesktopAppMainDirectory.model.ToDoCalendarActivity;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,9 +30,10 @@ public class ShoppingListController implements Initializable {
     MongoDBService mongoDBService;
     int amountOfTasks, rowHelper, rowHelperDeleting;
     Rectangle rectangleIndex, rectangleTask, rectangleFrame, rectangleAmount;
+    boolean checkIfCreated = false;
 
     @FXML
-    private Button returnButton;
+    private Button returnButton, showProducts;
     @FXML
     private FlowPane shoppingListPane;
     private StackPane rectangleStackPane;
@@ -199,7 +201,9 @@ public class ShoppingListController implements Initializable {
 
         this.rowHelperDeleting = rowHelperDeleting - 4;
         this.rowHelper = rowHelper - 4;
-
+        if(!checkIfCreated) {
+            this.checkIfCreated = true;
+        }
 
         //for checking
         System.out.println(rowHelper);
@@ -236,5 +240,15 @@ public class ShoppingListController implements Initializable {
             this.rowHelperDeleting = 49;
             this.rowHelper = 49;
         }
+    }
+
+    @FXML  //najwyzej sprawdzic czy overloading ok
+    private List<ShoppingList> showAllAddedProducts(ActionEvent event) {
+        List<ShoppingList> products = mongoDBService.findAllActive(ShoppingList.class);
+        if(products.isEmpty() && !checkIfCreated) {
+            System.out.println("No added activities.");
+            return null;
+        }
+        return products;
     }
 }
