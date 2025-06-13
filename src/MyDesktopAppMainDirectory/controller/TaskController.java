@@ -68,7 +68,7 @@ public class TaskController implements Initializable {
                 Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
                         ("/MyDesktopAppMainDirectory/view/MainView.fxml")));
                 Stage stage = (Stage) returnButton.getScene().getWindow();
-                stage.setScene(new Scene(root, 800, 640));
+                stage.setScene(new Scene(root, 1100, 650));
                 stage.setTitle("Desktop App");
                 stage.show();
             } catch (IOException ex) {

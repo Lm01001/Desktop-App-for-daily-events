@@ -99,9 +99,10 @@ public class Preview extends Application  {
     public void start(Stage stage) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
                 ("/MyDesktopAppMainDirectory/view/MainView.fxml")));
-        Scene scene = new Scene(root, 800, 640);
+        Scene scene = new Scene(root, 1100, 650);
         stage.setScene(scene);
         stage.setTitle("Desktop App");
+
         /*Pane layout = new Pane();
         stage.setTitle("creating label");
         Label name = new Label("Daily tasks");
@@ -137,7 +138,7 @@ public class Preview extends Application  {
                 if(fxmlUrl == null)
                     throw new IllegalStateException("FXML file not found!");
                 Stage stage2 = (Stage) tasksButton.getScene().getWindow();
-                stage2.setScene(new Scene(root2,800, 640));
+                stage2.setScene(new Scene(root2,1100, 650));
                 stage2.setTitle("Shopping list");
                 stage2.show();
             } catch (IOException ex) {
@@ -159,7 +160,7 @@ public class Preview extends Application  {
                 if(fxmlUrl == null)
                     throw new IllegalStateException("FXML file not found!");
                 Stage stage2 = (Stage) tasksButton.getScene().getWindow();
-                stage2.setScene(new Scene(root2,800, 640));
+                stage2.setScene(new Scene(root2,1100, 650));
                 stage2.setTitle("Task list");
                 stage2.show();
             } catch (IOException ex) {
@@ -180,7 +181,7 @@ public class Preview extends Application  {
                 if(fxmlUrl == null)
                     throw new IllegalStateException("FXML file not found!");
                 Stage stage2 = (Stage) calendarButton.getScene().getWindow();
-                stage2.setScene(new Scene(root2, 800, 640));
+                stage2.setScene(new Scene(root2, 1100, 650));
                 stage2.setTitle("Calendar");
                 stage2.show();
             } catch (IOException ex) {

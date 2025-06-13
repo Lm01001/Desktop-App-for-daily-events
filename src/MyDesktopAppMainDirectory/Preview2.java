@@ -39,6 +39,8 @@ public class Preview2 extends Application {
                 Stage stage = (Stage) calendarButton.getScene().getWindow();
                 Scene scene = new Scene(root);
                 stage.setTitle("Shopping List");
+                String css = Objects.requireNonNull(getClass().getResource("/MyDesktopAppMainDirectory/style/style.css")).toExternalForm();
+                scene.getStylesheets().add(css);
                 stage.setScene(scene);
                 stage.show();
             } catch (IOException ex) {
@@ -56,6 +58,8 @@ public class Preview2 extends Application {
                 Stage stage = (Stage) tasksButton.getScene().getWindow();
                 Scene scene = new Scene(root);
                 stage.setTitle("Tasks");
+                String css = Objects.requireNonNull(getClass().getResource("/MyDesktopAppMainDirectory/style/style.css")).toExternalForm();
+                scene.getStylesheets().add(css);
                 stage.setScene(scene);
                 stage.show();
             } catch (IOException ex) {
@@ -72,6 +76,8 @@ public class Preview2 extends Application {
                 Stage stage = (Stage) calendarButton.getScene().getWindow();
                 Scene scene = new Scene(root);
                 stage.setTitle("Calendar");
+                String css = Objects.requireNonNull(getClass().getResource("/MyDesktopAppMainDirectory/style/style.css")).toExternalForm();
+                scene.getStylesheets().add(css);
                 stage.setScene(scene);
                 stage.show();
             } catch (IOException ex) {
@@ -84,9 +90,14 @@ public class Preview2 extends Application {
     public void start(Stage stage) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/MyDesktopAppMainDirectory/view/MainView.fxml")));
         stage.setTitle("Desktop App");
-        Scene scene = new Scene(root,800, 640);
-        stage.setScene(scene);
+        //root.scaleXProperty().bind(stage.widthProperty().divide(800));
+        //root.scaleYProperty().bind(stage.widthProperty().divide(640));
+        Scene scene = new Scene(root, 1100, 650);
+        String css = Objects.requireNonNull(getClass().getResource("/MyDesktopAppMainDirectory/style/style.css")).toExternalForm();
+        System.out.println("Root classes: " + root.getStyleClass());
 
+        scene.getStylesheets().add(css);
+        stage.setScene(scene);
 
         stage.show();
     }
@@ -95,7 +106,7 @@ public class Preview2 extends Application {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(fxmlPath)));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root, 800, 640);
+            Scene scene = new Scene(root, 1100, 650);
             stage.setScene(scene);
 
             stage.show();
