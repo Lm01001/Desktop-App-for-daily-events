@@ -3,6 +3,8 @@ package MyDesktopAppMainDirectory.model;
 import MyDesktopAppMainDirectory.database.MongoDBService;
 import com.google.gson.annotations.Expose;
 import org.javatuples.Quartet;
+
+import javax.swing.*;
 import java.util.HashMap;
 import java.time.ZonedDateTime;
 
@@ -89,11 +91,15 @@ public class ToDoCalendarActivity extends Calendar {
     }
 
     public int usersChoice = 0;
-    public boolean isMandatory() {
-        while(true) {
-            System.out.print("Please choose if action is mandatory, ");
-            System.out.println("where 1 means yes, 2 means no.");
-            try {
+    public void isMandatory() {
+        this.usersChoice = JOptionPane.showConfirmDialog(null,"Please choose if action is mandatory:",
+                "Mandatory", JOptionPane.YES_NO_OPTION);
+        if(usersChoice == JOptionPane.YES_OPTION) {
+            setIfMandatory(true);
+        }
+            //System.out.print("Please choose if action is mandatory, ");
+            //System.out.println("where 1 means yes, 2 means no.");
+            /*try {
                 usersChoice = Integer.parseInt(choice.nextLine());
                 if(usersChoice == 1) {
                     setIfMandatory(true);
@@ -106,8 +112,7 @@ public class ToDoCalendarActivity extends Calendar {
                 }
             }catch(NumberFormatException e){
                 System.out.println("Choice not recognized. Please enter a valid number.");
-            }
-        }
+            }*/
     }
 
     public ToDoCalendarActivity createAction() {

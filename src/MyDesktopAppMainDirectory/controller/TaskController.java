@@ -1,11 +1,9 @@
 package MyDesktopAppMainDirectory.controller;
 import MyDesktopAppMainDirectory.database.MongoDBService;
-import MyDesktopAppMainDirectory.model.ShoppingList;
 import MyDesktopAppMainDirectory.model.Task;
 import com.github.lgooddatepicker.components.TimePicker;
 import com.github.lgooddatepicker.components.TimePickerSettings;
 import com.github.lgooddatepicker.zinternaltools.DemoPanel;
-import com.github.lgooddatepicker.zinternaltools.InternalUtilities;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,8 +11,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -26,15 +22,13 @@ import org.javatuples.Quartet;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URL;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
+import javax.swing.JOptionPane;
 
-import static com.github.lgooddatepicker.zinternaltools.InternalUtilities.getConstraints;
 
 public class TaskController implements Initializable {
     Quartet<StackPane, StackPane, StackPane, StackPane> chartRow;
@@ -239,6 +233,7 @@ public class TaskController implements Initializable {
     @FXML
     private void insertTask(ActionEvent event) throws IOException {
         if(this.chosenTime == null) {
+            JOptionPane.showMessageDialog(null, "Please choose time for your task first!");
             insertTaskButton.setDisable(true);
             return;
         } else {
@@ -255,29 +250,35 @@ public class TaskController implements Initializable {
         Task.Quartet quartetFromHashMap;
         quartetFromHashMap = hashMapForTask.get("0");
         Text textInsideCell = new Text(quartetFromHashMap.date());
+
         //Adding date
         taskList.getChildren().remove(taskList.getChildren().size() - (rowHelper));
         rectangleStackPane = createBoxCell(rectangleDate.getWidth(), rectangleDate.getHeight(), rectangleFrame.getStroke(),
                 rectangleFrame.getFill(),textInsideCell);
         taskList.getChildren().add(taskList.getChildren().size() - (rowHelper - 1),rectangleStackPane);
+
         //Adding task
         textInsideCell = new Text(quartetFromHashMap.name());
         taskList.getChildren().remove(taskList.getChildren().size() - (rowHelper - 1));
         rectangleStackPane = createBoxCell(rectangleTask.getWidth(), rectangleTask.getHeight(), rectangleFrame.getStroke(),
                 rectangleFrame.getFill(),textInsideCell);
         taskList.getChildren().add(taskList.getChildren().size() - (rowHelper - 2),rectangleStackPane);
+
         //Adding importance
         textInsideCell = new Text(quartetFromHashMap.howImportant());
         taskList.getChildren().remove(taskList.getChildren().size() - (rowHelper - 2));
         rectangleStackPane = createBoxCell(rectangleDate.getWidth(), rectangleDate.getHeight(), rectangleFrame.getStroke(),
                 rectangleFrame.getFill(),textInsideCell);
         taskList.getChildren().add(taskList.getChildren().size() - (rowHelper - 3),rectangleStackPane);
+
         //Adding status
         textInsideCell = new Text(quartetFromHashMap.status());
         taskList.getChildren().remove(taskList.getChildren().size() - (rowHelper - 3));
         rectangleStackPane = createBoxCell(rectangleDate.getWidth(), rectangleDate.getHeight(), rectangleFrame.getStroke(),
                 rectangleFrame.getFill(),textInsideCell);
         taskList.getChildren().add(taskList.getChildren().size() - (rowHelper - 4),rectangleStackPane);
+
+        JOptionPane.showMessageDialog(null, "Task added successfully.", "Proceeded", JOptionPane.INFORMATION_MESSAGE);
         this.mongoDBService.insertTask(tasksToDB);
         this.chosenTime = null;
         this.rowHelperDeleting = rowHelperDeleting - 5;
@@ -347,7 +348,8 @@ public class TaskController implements Initializable {
     private List<Task> showAllTasks(ActionEvent event) {
         List<Task> tasks = mongoDBService.findAllActive(Task.class);
         if(tasks.isEmpty() && !checkIfCreated) {
-            System.out.println("No added activities.");
+            JOptionPane.showMessageDialog(null, "No tasks found!", "Task List", JOptionPane.INFORMATION_MESSAGE);
+            //System.out.println("No added activities.");
             return null;
         }
         return tasks;

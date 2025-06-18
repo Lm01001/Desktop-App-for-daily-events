@@ -2,7 +2,7 @@ package MyDesktopAppMainDirectory.model;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import org.javatuples.Quartet;
-
+import javax.swing.JOptionPane;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,13 +50,13 @@ public class Task extends List {
         this.index = index;
     }
 
-    private String status = "Not Completed";
+    private String status = "Not\nCompleted";
     public String getStatus() {
         return status;
     }
-    public void setStatus(String status) {
+    /*public void setStatus(String status) {
         this.status = status;
-    }
+    }*/
 
     int taskCompletion = 0;
     public int getTaskCompletion() {
@@ -75,12 +75,12 @@ public class Task extends List {
     }
     private String howImportant = "Optional";
     public String getHowImportant() {
-        if(getPriority() == 1) {
+        if(getPriority() == 0) {
+            this.howImportant = "Optional";
+        } else if(getPriority() == 1) {
             this.howImportant = "Low priority";
-        } else if(getPriority() == 2) {
-            this.howImportant = "Optional, to do";
         } else {
-            this.howImportant = "Very important";
+            this.howImportant = "Obligatory";
         }
         return howImportant;
     }
@@ -125,7 +125,6 @@ public class Task extends List {
         super(0, "Default name");
         this.index = 0;
         this.howImportant = "Default";
-        this.status = "Default";
     }
 
     /*Choosing task's time, default time is equal to current time
@@ -166,7 +165,7 @@ public class Task extends List {
             }
             for(Map.Entry<String, Quartet> tasks : tasks.entrySet()) {
                 if(tasks.getKey().equals(String.valueOf(taskCompletion))) {
-                    setStatus("Completed");
+                    //setStatus("Completed");
                     break;
                 }else{
                     System.out.println("Index not found. Please enter a valid number.");
