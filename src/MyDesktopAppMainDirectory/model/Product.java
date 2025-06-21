@@ -1,31 +1,36 @@
 package MyDesktopAppMainDirectory.model;
 import MyDesktopAppMainDirectory.model.List;
-
-import java.util.Scanner;
+import javax.swing.*;
 
 public class Product extends List {
-    private int amount = 0;
-    public int getAmount(){
+    private String amount;
+    public String getAmount(){
         return amount;
-    }
-    private String amountAsString = String.valueOf(getAmount());
-    public String getAmountString(){
-        return amountAsString;
     }
 
     public Product(int priority, String name, String amount) {
         super(priority, name);
-        this.amountAsString = amount;
+        this.amount = amount;
     }
 
-    //Extra no-argument constructor as a helper for ShoppingList inside Db class
+    /*Extra no-argument constructor as a helper for ShoppingList inside Db class
     public Product() {
         super(0, "Default name");
-        this.amount = 0;
-    }
+        this.amount = "0";
+    } subclass default constructor used*/
 
-    public void setAmount(int amount) {       //Choosing amount/number to buy for each item
+    public void setAmount() {       //Choosing amount/number to buy for each item
         while(true){
+            this.amount = JOptionPane.
+                    showInputDialog("Please choose quantity of products you want to add (max up to 1000): ");
+            if(!checkInput(amount)){
+                JOptionPane.showMessageDialog(null, "Amount too big or invalid input! Enter correct value.", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                break;
+            }
+        }
+       // }
+        /*while(true){
             System.out.println("Please choose quantity of products you want to add (max up to 1000): ");
             try{
                 amount = Integer.parseInt(choice.nextLine());
@@ -38,10 +43,19 @@ public class Product extends List {
             }catch(NumberFormatException e){
                 System.out.println("Choice not recognized. Please enter a valid number.");
             }
-        }
+        }*/
     }
 
-    public void setAmountString() {
-        this.amountAsString = String.valueOf(getAmount());
+    private boolean checkInput(String number){
+        int length = number.length();
+        if(number.length() > 3 || number.equals("0")){
+            return false;
+        }
+        for(int i = 0; i < length; i++){
+            if(!Character.isDigit(number.charAt(i))){
+                return false;
+            }
+        }
+        return true;
     }
 }

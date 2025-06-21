@@ -173,7 +173,7 @@ public class ShoppingListController implements Initializable {
         shoppingListsToDB.add(finalProduct);
         this.amountOfTasks++;
         //Adding provided task details as values in hashMap
-        finalProduct.quartetCreator(finalProduct.getHowImportant(), finalProduct.getName(), finalProduct.getAmountString(), finalProduct.getBought());
+        finalProduct.quartetCreator(finalProduct.getHowImportant(), finalProduct.getName(), finalProduct.getAmount(), finalProduct.getBought());
         HashMap<Integer, ShoppingList.Quartet> hashMapForAProduct;
         //Creating hashMap using created quartet
         hashMapForAProduct = shoppingList.addHashMapValue();

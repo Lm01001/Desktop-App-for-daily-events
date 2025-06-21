@@ -82,7 +82,7 @@ public class ShoppingList extends Product {
     public Quartet quartetCreator(String priority, String name, String amount, String bought) {
         priority = getHowImportant();
         name = getName();
-        amount = getAmountString();
+        amount = getAmount();
         bought = getBought();
         this.quartetForProduct = new Quartet(priority, name, amount, bought);
         return quartetForProduct;
@@ -93,7 +93,7 @@ public class ShoppingList extends Product {
 
     public HashMap<Integer, Quartet> finalProduct = new HashMap<>();
     public HashMap<Integer, Quartet> addHashMapValue() {
-        Quartet product = quartetCreator(getHowImportant(), getName(), getAmountString(), getBought());
+        Quartet product = quartetCreator(getHowImportant(), getName(), getAmount(), getBought());
         finalProduct.put(getProductsIndex(), product);
         setProductsIndex(getProductsIndex() + 1);
         return finalProduct;
@@ -113,22 +113,21 @@ public class ShoppingList extends Product {
     }
 
     public ShoppingList addProduct() {
-        super.setPriority(getPriority());
         super.setName(0);
-        super.setAmount(0);
-        super.setAmountString();
+        super.setPriority(getPriority());
+        super.setAmount();
         ShoppingList shoppingList;
         if (getBoughtBoolean()) {
             setStatus("Bought");
             addHashMapValue();
-            shoppingList = new ShoppingList(getPriority(), getName(), getAmountString(), status, index);
+            shoppingList = new ShoppingList(getPriority(), getName(), getAmount(), status, index);
             setProductsIndex(getProductsIndex() + 1);
             setIndex(getIndex() + 1);
             //setBought(false);
             //setStatus("To buy");
         } else {
             addHashMapValue();
-            shoppingList = new ShoppingList(getPriority(), getName(), getAmountString(), status, index);
+            shoppingList = new ShoppingList(getPriority(), getName(), getAmount(), status, index);
             setProductsIndex(getProductsIndex() + 1);
             setIndex(getIndex() + 1);
         }
