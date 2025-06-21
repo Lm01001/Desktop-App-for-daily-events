@@ -22,8 +22,8 @@ import java.util.Objects;
 import static javafx.application.Application.launch;
 
 
-public class Preview extends Application  {
-    @FXML
+public class Preview  {
+   /*@FXML
     Button exitButton, exportButton, shoppingListButton, calendarButton, tasksButton;
 
     @FXML
@@ -92,7 +92,7 @@ public class Preview extends Application  {
             //moze przydatne przy testowaniu
             System.out.println("Button pressed. akcja ktora ma miejsca po nacisnieciu");
         }
-    }*/
+    }
 
     //nie zmienia sie na gorze z powrotem na desktop app
     @Override
@@ -112,7 +112,7 @@ public class Preview extends Application  {
         name.setMinHeight(80);
         name.setStyle("-fx-font: 36 arial");
         //name.setStyle("-fx-font-weight: bold");
-        layout.getChildren().add(name);*/
+        layout.getChildren().add(name);
 
         exitButton = new Button();
         exitButton.setText("Exit");
@@ -194,6 +194,6 @@ public class Preview extends Application  {
 
     public static void main(String[] args) {
         launch(args);
-    }
+    }*/
 }
 

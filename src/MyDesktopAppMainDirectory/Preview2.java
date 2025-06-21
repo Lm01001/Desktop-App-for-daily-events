@@ -26,9 +26,9 @@ public class Preview2 extends Application {
     private void initialize() {
         exitButton.setOnAction(e -> Platform.exit());
 
-        /*exportButton.setOnAction(e -> {
+        exportButton.setOnAction(e -> {
 
-        });*/
+        });
 
         shoppingListButton.setOnAction(e -> {
             try {
