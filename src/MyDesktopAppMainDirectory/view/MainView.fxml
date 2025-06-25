@@ -1,15 +1,19 @@
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
+<?xml version="1.0" encoding="UTF-8"?>
 
-<Pane xmlns:fx="http://javafx.com/fxml" fx:controller="MyDesktopAppMainDirectory.Preview2" prefWidth="800" prefHeight="600">
-    <Label text="Daily tasks" layoutX="310" layoutY="60" style="-fx-font: 36 arial; -fx-font-weight: bold" />
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Label?>
 
-    <Button fx:id="exitButton" text="Exit" layoutX="750" layoutY="10" />
+<AnchorPane xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="MyDesktopAppMainDirectory.controller.MainViewController" stylesheets="@../style/style.css">
+    <Label text="Daily tasks" layoutX="455" layoutY="60" style="-fx-font: 36 arial; -fx-font-weight: bold" />
 
-    <Button fx:id="shoppingListButton" text="Shopping List" layoutX="350" layoutY="500" />
-    <Button fx:id="tasksButton" text="Tasks" layoutX="100" layoutY="500" />
-    <Button fx:id="calendarButton" text="Calendar" layoutX="625" layoutY="500" />
-</Pane>
+    <Button fx:id="exitButton" text="Exit" layoutX="1030" layoutY="10" />
+
+    <Button fx:id="shoppingListButton" text="Shopping List" layoutX="500" layoutY="450" />
+    <Button fx:id="tasksButton" text="Tasks" layoutX="300" layoutY="450" />
+    <Button fx:id="calendarButton" text="Calendar" layoutX="725" layoutY="450" />
+</AnchorPane>
 
     <!--Reusable object
     <fx:define>

@@ -1,5 +1,7 @@
 package MyDesktopAppMainDirectory.model;
 import MyDesktopAppMainDirectory.model.Event;
+
+import javax.swing.*;
 import java.util.Scanner;
 
 public class List implements Event {
@@ -38,18 +40,49 @@ public class List implements Event {
     //Extra no-argument constructor as a helper for ShoppingList, Task inside Db class
     public List() {
         this.priority = 0;
-        this.name = "Default name";
+        this.name = getName();
     }
 
     @Override
-    public void setName(String name) {      //Setting action's name
-        System.out.println("Please choose name of the product You want to add to the list: ");
-        this.name = choice.nextLine();
+    public void setName(int c) {      //Setting action's name  //!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        boolean check = true;
+        if(c == 0){
+            while(check){
+                this.name = JOptionPane.
+                        showInputDialog("Please choose name of the product You want to add to the list: ");
+                if(!name.equals("Default name") && name.length() < 75){
+                    check = false;
+                } if(name.length() > 75) {
+                    JOptionPane.showMessageDialog(null, "Name is too long!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+
+            //System.out.println("Please choose name of the product You want to add to the list: ");
+            //this.name = choice.nextLine();
+        } else {
+            while(check){
+                this.name =JOptionPane.
+                        showInputDialog("Please choose name of the task You want to add to the list: ");
+                if(!name.equals("Default name")){
+                    check = false;
+                }
+            }
+
+            //System.out.println("Please choose name of the task You want to add to the list: ");
+            //this.name = choice.nextLine();
+        }
     }
+
 
     @Override
     public void setPriority(int priority) {
-        while(true){
+        Object[] choice = {"Optional", "Low priority", "High priority"};
+        this.priority = JOptionPane.showOptionDialog(null,
+                "Please choose priority for your task to add to the list: ",
+                "Choose task's priority", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                null, choice, choice[1]);
+
+        /*while(true){
             System.out.print("Please choose priority from range 1-3, ");
             System.out.print("where 1 means lower priority, 2 means normal - " +
                     "not something important, but to do ");
@@ -64,7 +97,7 @@ public class List implements Event {
             }catch(NumberFormatException e){
                 System.out.println("Choice not recognized. Please enter a valid number.");
             }
-        }
+        }*/
     }
 
     @Override

@@ -1,13 +1,31 @@
 package MyDesktopAppMainDirectory;
-import MyDesktopAppMainDirectory.model.*;
-import MyDesktopAppMainDirectory.database.MongoDBService;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import java.io.IOException;
+import java.util.Objects;
 
-import java.time.DayOfWeek;
+public class Main extends Application {
 
-public class Main {
+    @Override
+    public void start(Stage stage) throws IOException {
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/MyDesktopAppMainDirectory/view/MainView.fxml")));
+        stage.setTitle("Desktop App");
+        //root.scaleXProperty().bind(stage.widthProperty().divide(800));
+        //root.scaleYProperty().bind(stage.widthProperty().divide(640));
+        Scene scene = new Scene(root, 1100, 650);
+        String css = Objects.requireNonNull(getClass().getResource("/MyDesktopAppMainDirectory/style/style.css")).toExternalForm();
+        System.out.println("Root classes: " + root.getStyleClass());
+
+        scene.getStylesheets().add(css);
+        stage.setScene(scene);
+
+        stage.show();
+    }
+
     public static void main(String[] args) {
-        /*ToDoCalendarActivity todo = new ToDoCalendarActivity(1, "cos", "11-11-2022",DayOfWeek.MONDAY. ,
-            0, "yes", "a");
-        todo.createAction();*/
+        launch(args);
     }
 }

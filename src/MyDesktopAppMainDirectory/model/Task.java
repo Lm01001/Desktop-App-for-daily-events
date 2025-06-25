@@ -1,5 +1,10 @@
 package MyDesktopAppMainDirectory.model;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
+import org.javatuples.Quartet;
+import javax.swing.JOptionPane;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -16,7 +21,7 @@ public class Task extends List {
         return nowAsAString;
     }
 
-    private String tasksTime = getNowAsAString();
+    private String tasksTime = "";
     public String getTasksTime() {
         return tasksTime;
     }
@@ -24,18 +29,16 @@ public class Task extends List {
         this.tasksTime = tasksTime;
     }
 
-    String chosenTime;
-    public String getChosenTime() {
-        return chosenTime;
-    }
-
     private final LocalTime hourAndMinutes = LocalTime.of(now.getHour(), now.getMinute());
     /*public LocalTime getHourAndMinutes() {
         return hourAndMinutes;
     }*/
-    private final String hourAndMinutesAsAString = hourAndMinutes.toString();
+    private String hourAndMinutesAsAString = hourAndMinutes.toString();
     public String getHourAndMinutesAsAString() {
         return hourAndMinutesAsAString;
+    }
+    public void setHourAndMinutesAsString(String hourAndMinutesAsAString) {
+        this.hourAndMinutesAsAString = hourAndMinutesAsAString;
     }
 
     private int index = 0;
@@ -47,13 +50,13 @@ public class Task extends List {
         this.index = index;
     }
 
-    private String status = "Not Completed";
+    private String status = "Not\nCompleted";
     public String getStatus() {
         return status;
     }
-    public void setStatus(String status) {
+    /*public void setStatus(String status) {
         this.status = status;
-    }
+    }*/
 
     int taskCompletion = 0;
     public int getTaskCompletion() {
@@ -72,57 +75,70 @@ public class Task extends List {
     }
     private String howImportant = "Optional";
     public String getHowImportant() {
-        if(getPriority() == 1) {
+        if(getPriority() == 0) {
+            this.howImportant = "Optional";
+        } else if(getPriority() == 1) {
             this.howImportant = "Low priority";
-        } else if(getPriority() == 2) {
-            this.howImportant = "Optional, to do";
         } else {
-            this.howImportant = "Very important";
+            this.howImportant = "Obligatory";
         }
         return howImportant;
     }
 
     //Quartet used for creating a task excluding time, only name, status, importance (index -> automatic/incrementing after each task)
-    private static record Quartet(int index, String name, String howImportant, String status) {};
-    public Quartet quartetCreator(int index, String name, String howImportant, String status) {
-        return new Quartet(this.index, name, this.howImportant, this.status);
+    /*private*/public record Quartet(String date, String name, String howImportant, String status) {};
+    public Quartet quartetForTask;
+
+    public Quartet quartetCreator(String date, String name, String howImportant, String status) {
+        date = this.getTasksTime();
+        howImportant = this.getHowImportant();
+        status = this.getStatus();
+        this.quartetForTask = new Quartet(date, name, howImportant, status);
+        return quartetForTask;
+    }
+    public Quartet getQuartet(){
+        return this.quartetForTask;
     }
 
     //HashMap with time as a key, and quartet including task details as a value
-    private final HashMap<String, Quartet>tasks = new HashMap<>();
-    public void addHashMapValue() {
-        Quartet task = quartetCreator(getIndex(), getName(), getHowImportant(), getStatus());
-        tasks.put(getHourAndMinutesAsAString(), task);
+    /*private final*/public HashMap<String, Quartet> tasks = new HashMap<>();
+    public HashMap<String, Quartet> getTasks() {
+        return tasks;
+    }
+    public HashMap<String, Quartet> addHashMapValue() {
+        Quartet task = quartetCreator(getHourAndMinutesAsAString(), getName(), getHowImportant(), getStatus());
+        tasks.put(String.valueOf(getIndex()), task);
         setIndex(getIndex() + 1);
+        return tasks;
     }
 
-    public Task(int priority, String name, int index, String nowAsAString, String howImportant,
-                String status, String hourAndMinutesAsAString) {
+    public Task(int priority, String name, int index, String howImportant,
+                String status, String time) {
         super(priority, name);
         this.index = index;
         this.howImportant = howImportant;
         this.status = status;
+        this.tasksTime = time;
     }
 
     public Task() {
         super(0, "Default name");
         this.index = 0;
         this.howImportant = "Default";
-        this.status = "Default";
     }
 
-    //Choosing task's time, default time is equal to current time
+    /*Choosing task's time, default time is equal to current time
     public void setTasksTime() {
         System.out.println("Please set the time of the task you want to add.");
         System.out.println("Time should be provided in format HH:MM, otherwise " +
                 "time will be set to current time.");
-        chosenTime = choice.nextLine();
-        if(chosenTime.length() != 5 || chosenTime.charAt(2) != ':') {
-            this.chosenTime = getTasksTime();
+        String taskTime = choice.nextLine();
+        if(taskTime.length() != 5 || taskTime.charAt(2) != ':') {
+            this.tasksTime = getHourAndMinutesAsAString();
         } else {
-            setTasksTime(chosenTime);
+            this.tasksTime = taskTime;
         }
-    }
+    }*/
 
     //Used during editing existing list, deleting/unchecking completed tasks
     public void ifCompleted() {
@@ -148,8 +164,8 @@ public class Task extends List {
                 System.out.println("Value not recognized. Please enter a valid number.");
             }
             for(Map.Entry<String, Quartet> tasks : tasks.entrySet()) {
-                if(tasks.getValue().index() == taskCompletion) {
-                    setStatus("Completed");
+                if(tasks.getKey().equals(String.valueOf(taskCompletion))) {
+                    //setStatus("Completed");
                     break;
                 }else{
                     System.out.println("Index not found. Please enter a valid number.");
@@ -159,7 +175,7 @@ public class Task extends List {
     }
 
     //Deleting unwanted tasks, when creating or editing
-    public void deleteTask()
+    /*public void deleteTask()
     {
         while(true) {
             try {
@@ -170,7 +186,7 @@ public class Task extends List {
                 Iterator<Map.Entry<String, Quartet>> iterator = tasks.entrySet().iterator();
                 while (iterator.hasNext()) {
                     Map.Entry<String, Quartet> entry = iterator.next();
-                    if (entry.getValue().index() == getDeleteTask()) {
+                    if (entry.getKey() == getDeleteTask()) {
                         iterator.remove();
                         foundIndex = true;
                         break;
@@ -184,7 +200,7 @@ public class Task extends List {
                 System.out.println("Value not recognized. Please enter a valid number.");
             }
         }
-    }
+    }*/
 
     //Showing already existing tasks before adding them to the db
     public void showActiveTasks() {
@@ -193,17 +209,16 @@ public class Task extends List {
             System.out.println("There are no tasks in the database.");
             return;
         }
-        System.out.println("Time     Tasks Information");
+        System.out.println("Index     Time  Tasks Information");
         for(Map.Entry<String, Quartet> tasks : tasks.entrySet()) {
-            System.out.println(taskIndex + "       " + tasks.getKey() + "     " + tasks.getValue());
+            System.out.println(taskIndex + "       " + tasks.getValue());
         }
     }
 
     public Task createTask() {
-        super.setName(getName());
+        super.setName(1);
         super.setPriority(getPriority());
-        setTasksTime();
-        return new Task(getPriority(), getName(), getIndex(), getNowAsAString(), getHowImportant(),
-                getStatus(), getHourAndMinutesAsAString());
+        return new Task(getPriority(), getName(), getIndex(), getHowImportant(),
+                getStatus(), getTasksTime());
     }
 }

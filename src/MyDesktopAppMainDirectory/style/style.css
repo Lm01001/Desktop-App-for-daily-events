@@ -1,0 +1,27 @@
+.root {
+    -fx-background-image: url("/resources/images/full_background_main_transparent_resized.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-color: transparent;
+}
+
+.rootTask {
+    -fx-background-image: url("/resources/images/task-background-resized.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-color: transparent;
+}
+
+.rootCalendar {
+    -fx-background-image: url("/resources/images/calendar-background-resized.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-color: transparent;
+}
+
+.rootShoppingList {
+    -fx-background-image: url("/resources/images/shopping-list-background-resized.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-color: transparent; //przypisac to jeszcze w klasach
+}

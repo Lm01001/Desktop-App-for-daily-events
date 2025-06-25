@@ -30,6 +30,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 public class CalendarController implements Initializable {
     ZonedDateTime dateFocus;
     ZonedDateTime today;
@@ -40,7 +41,7 @@ public class CalendarController implements Initializable {
     MongoDBService mongoDBService;
     ToDoCalendarActivity toDoCalendarActivity;
     boolean checkIfCreated = false;
-    Popup popup;
+    //Popup popup;
 
     @FXML
     private Text year, month, day;
@@ -79,7 +80,9 @@ public class CalendarController implements Initializable {
                 Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
                         ("/MyDesktopAppMainDirectory/view/MainView.fxml")));
                 Stage stage = (Stage) returnButton.getScene().getWindow();
-                stage.setScene(new Scene(root));
+                stage.setScene(new Scene(root, 1100, 650));
+                stage.setTitle("Desktop App");
+                stage.setResizable(false);
                 stage.show();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
@@ -209,9 +212,6 @@ public class CalendarController implements Initializable {
             calendarActivityBox.getChildren().add(text);
         }
         calendarActivityBox.setStyle("-fx-background-color:LIGHTGRAY");
-        /*calendarActivityBox.setPrefWidth(rectangleWidth * 0.8);
-        calendarActivityBox.setPrefHeight(rectangleHeight * 0.65);*/
-        //calendarActivityBox.setTranslateY(rectangleHeight * 0.25);
         stackPane.getChildren().removeIf(node -> node instanceof VBox);
         stackPane.getChildren().addFirst(calendarActivityBox);
         /*if(!this.toDoCalendarActivity.ifStillInProgress().equals("yes")) {
@@ -258,6 +258,7 @@ public class CalendarController implements Initializable {
         if(!checkIfCreated) {
             this.checkIfCreated = true;
         }
+        //mongoDBService.findAllActive(ToDoCalendarActivity.class);
         /*if(!popup.isShowing()) {
             //popup.getContent().add(popupForCalendar);
             popupForCalendar.setVisible(true);

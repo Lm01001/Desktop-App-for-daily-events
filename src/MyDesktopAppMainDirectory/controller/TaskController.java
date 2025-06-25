@@ -1,94 +1,357 @@
 package MyDesktopAppMainDirectory.controller;
-import MyDesktopAppMainDirectory.model.ToDoCalendarActivity;
+import MyDesktopAppMainDirectory.database.MongoDBService;
+import MyDesktopAppMainDirectory.model.Task;
+import com.github.lgooddatepicker.components.TimePicker;
+import com.github.lgooddatepicker.components.TimePickerSettings;
+import com.github.lgooddatepicker.zinternaltools.DemoPanel;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import org.javatuples.Quartet;
 
+import javax.swing.*;
+import java.awt.*;
+import java.io.IOException;
 import java.net.URL;
-import java.time.ZonedDateTime;
+import java.time.*;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
+import javax.swing.JOptionPane;
 
-public class TaskController {
+
+public class TaskController implements Initializable {
+    Quartet<StackPane, StackPane, StackPane, StackPane> chartRow;
+    HashMap<String, Quartet<StackPane, StackPane, StackPane, StackPane>> fullRow = new HashMap<>();
+    Task task;
+    List<Task> tasksToDB;
+    MongoDBService mongoDBService;
+    int amountOfTasks, rowHelper, rowHelperDeleting;
+    Rectangle rectangleIndex, rectangleDate, rectangleTask, rectangleFrame;
+    String chosenTime;
+    boolean checkIfCreated = false;
+
+    static DemoPanel panel;
+    final ZoneId zone = ZoneId.of("Europe/Warsaw");
+    final LocalTime time = ZonedDateTime.now(zone).toLocalTime();
+
+
     @FXML
-    private Button addButton;
+    private Button returnButton, insertTaskButton, showTasks, deleteTaskButton, timePick;
     @FXML
     private FlowPane taskList;
+    private StackPane rectangleStackPane;
+    @FXML
+    private TimePicker taskTimePicker;
+
 
     @FXML
-    private void onAddClicked() {
-        System.out.println("Add button clicked!");
-        // Logic to handle adding a shopping list item
+    private void returnButton(ActionEvent event) throws IOException {
+        returnButton.setOnMouseClicked(e -> {
+            try {
+                Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource
+                        ("/MyDesktopAppMainDirectory/view/MainView.fxml")));
+                Stage stage = (Stage) returnButton.getScene().getWindow();
+                stage.setScene(new Scene(root, 1100, 650));
+                stage.setTitle("Desktop App");
+                stage.show();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        //System.out.println("Button clicked");
+    }
+
+
+    @FXML
+    private void choosingTasksTime(ActionEvent event) throws IOException {
+        JFrame frame = new JFrame();
+        frame.setTitle("Time Picker" );
+        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        TimePickerSettings timeSettings = new TimePickerSettings();
+        timeSettings.use24HourClockFormat();
+        timeSettings.initialTime = LocalTime.of(time.getHour(), time.getMinute());
+        timeSettings.generatePotentialMenuTimes(TimePickerSettings.TimeIncrement.FiveMinutes, time, null);
+        taskTimePicker = new TimePicker(timeSettings);
+
+        JButton okButton = new JButton("Ok"); //Confirming chosen time
+        okButton.addActionListener(e -> {
+            LocalTime selected = taskTimePicker.getTime();
+            if (selected != null) {
+                chosenTime = selected.toString();
+            }
+            frame.dispose();
+        });
+
+        JPanel timePanel = new JPanel();
+        timePanel.setLayout(new BoxLayout(timePanel, BoxLayout.Y_AXIS));
+        JLabel label = new JLabel("Choose time for your task:");
+        timePanel.add(okButton);
+        timePanel.add(label);
+
+        timePanel.add(taskTimePicker);
+        JScrollPane scrollPane = new JScrollPane(timePanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+        frame.getContentPane().add(scrollPane);
+        frame.setMinimumSize(new Dimension(250, 140));
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        insertTaskButton.setDisable(false);
     }
 
     @FXML
     public void initialize(URL url, ResourceBundle rb) {
         //Only for making calendar (while choosing date) in english
         Locale.setDefault(Locale.ENGLISH);
+        this.task = new Task();
+        task.setIndex(0);
+        this.mongoDBService = new MongoDBService();
+        this.amountOfTasks = 0;
+        this.rowHelper = 49;
+        this.rowHelperDeleting = 49;
+        this.rectangleFrame = new Rectangle();
+        this.rectangleStackPane = new StackPane();
+        this.rectangleDate = new Rectangle();
+        this.rectangleIndex = new Rectangle();
+        this.rectangleTask = new Rectangle();
+
+        this.chosenTime = null;
+
+        tasksToDB = new ArrayList<>();
+        drawBox();
     }
 
+    //Creating blank table and saving stackPanes inside a hashmap
+    private void drawBox() {
+        List<StackPane> helperList = new ArrayList<StackPane>();
 
-    private void drawCalendar() {
-        double strokeWidth = 1;
-        /* year.setText(String.valueOf(dateFocus.getYear()));
-        month.setText(String.valueOf(dateFocus.getMonth()));
-        double calendarWidth = calendar.getPrefWidth();
-        double calendarHeight = calendar.getPrefHeight();
+        double strokeWidth = 2.0;
+        double strokeWidthTaskFrame = 1.0;
+        double rectangleWidthDate = 80.0;
+        double rectangleWidthIndex = 45.0;
+        double rectangleWidthTask = 400.0;
+        double rectangleHeight = 45.0;
+        rectangleFrame.setWidth(rectangleWidthDate);
+        rectangleFrame.setHeight(rectangleHeight);
+        rectangleFrame.setFill(Color.LIGHTBLUE);
+        rectangleFrame.setStroke(Color.DARKBLUE);
+        rectangleFrame.setStrokeWidth(strokeWidth);
 
-        double spacingH = calendar.getHgap();
-        double spacingV = calendar.getVgap();
+        Text textIndex = new Text("Index");
+            this.rectangleFrame.setWidth(rectangleWidthIndex);
+            rectangleStackPane = createBoxCell(rectangleFrame.getWidth(), rectangleFrame.getHeight(), rectangleFrame.getStroke(), rectangleFrame.getFill(), textIndex);
+            taskList.getChildren().add(rectangleStackPane);
+        Text textDate = new Text("Date");
+            this.rectangleFrame.setWidth(rectangleWidthDate);
+            rectangleStackPane = createBoxCell(rectangleFrame.getWidth(), rectangleFrame.getHeight(), rectangleFrame.getStroke(), rectangleFrame.getFill(), textDate);
+            taskList.getChildren().add(rectangleStackPane);
+            helperList.add(rectangleStackPane);
+        Text textTask = new Text("Task");
+            this.rectangleFrame.setWidth(rectangleWidthTask);
+            rectangleStackPane = createBoxCell(rectangleFrame.getWidth(), rectangleFrame.getHeight(), rectangleFrame.getStroke(), rectangleFrame.getFill(), textTask);
+            helperList.add(rectangleStackPane);
+            taskList.getChildren().add(rectangleStackPane);
+        Text textHowImportant = new Text("Importance");
+            this.rectangleFrame.setWidth(rectangleWidthDate);
+            rectangleStackPane = createBoxCell(rectangleFrame.getWidth(), rectangleFrame.getHeight(), rectangleFrame.getStroke(), rectangleFrame.getFill(), textHowImportant);
+            helperList.add(rectangleStackPane);
+            taskList.getChildren().add(rectangleStackPane);
+        Text textStatus = new Text("Status");
+            rectangleStackPane = createBoxCell(rectangleFrame.getWidth(), rectangleFrame.getHeight(), rectangleFrame.getStroke(), rectangleFrame.getFill(), textStatus);
+            helperList.add(rectangleStackPane);
+            taskList.getChildren().add(rectangleStackPane);
 
-        //List of activities for a given month
-        Map<Integer, List<ToDoCalendarActivity>> calendarActivityMap = getCalendarActivitiesMonth(dateFocus);
+        Text blankFulfillment = new Text();
+        Text indexAsText;
+        this.rectangleFrame.setStroke(Color.BLACK);
+        this.rectangleFrame.setFill(Color.TRANSPARENT);
 
-        int monthMaxDate = dateFocus.getMonth().maxLength();
-        //Check for leap year
-        if(dateFocus.getYear() % 4 != 0 && monthMaxDate == 29){
-            monthMaxDate = 28;
+        this.rectangleDate.setStrokeWidth(strokeWidthTaskFrame);
+        this.rectangleDate.setHeight(rectangleHeight);
+        this.rectangleDate.setWidth(rectangleWidthDate);
+
+        this.rectangleIndex.setStrokeWidth(strokeWidthTaskFrame);
+        this.rectangleIndex.setHeight(rectangleHeight);
+        this.rectangleIndex.setWidth(rectangleWidthIndex);
+
+        this.rectangleTask.setStrokeWidth(strokeWidthTaskFrame);
+        this.rectangleTask.setHeight(rectangleHeight);
+        this.rectangleTask.setWidth(rectangleWidthTask);
+
+        chartRow = Quartet.fromCollection(helperList);
+        this.fullRow.put("Index", chartRow);
+        helperList.clear();
+
+        for (int i = 0; i < 10; i++) {
+                indexAsText = new Text(String.valueOf(i + 1));
+                rectangleStackPane = createBoxCell(rectangleIndex.getWidth(), rectangleIndex.getHeight(), rectangleFrame.getStroke(), rectangleFrame.getFill(), indexAsText);
+                taskList.getChildren().add(rectangleStackPane);
+                //Date
+                rectangleStackPane = createBoxCell(rectangleDate.getWidth(), rectangleDate.getHeight(), rectangleFrame.getStroke(), rectangleFrame.getFill(), blankFulfillment);
+                helperList.add(rectangleStackPane);
+                taskList.getChildren().add(rectangleStackPane);
+                //Task's name
+                rectangleStackPane = createBoxCell(rectangleTask.getWidth(), rectangleTask.getHeight(), rectangleFrame.getStroke(), rectangleFrame.getFill(), blankFulfillment);
+                helperList.add(rectangleStackPane);
+                taskList.getChildren().add(rectangleStackPane);
+                //How important, priority
+                rectangleStackPane = createBoxCell(rectangleDate.getWidth(), rectangleDate.getHeight(), rectangleFrame.getStroke(), rectangleFrame.getFill(), blankFulfillment);
+                helperList.add(rectangleStackPane);
+                taskList.getChildren().add(rectangleStackPane);
+                //Status
+                rectangleStackPane = createBoxCell(rectangleDate.getWidth(), rectangleDate.getHeight(), rectangleFrame.getStroke(), rectangleFrame.getFill(), blankFulfillment);
+                helperList.add(rectangleStackPane);
+                taskList.getChildren().add(rectangleStackPane);
+                chartRow =  Quartet.fromCollection(helperList);
+                fullRow.put(String.valueOf(i + 1), chartRow);
+                helperList.clear();
         }
-        int dateOffset = ZonedDateTime.of(dateFocus.getYear(), dateFocus.getMonthValue(), 1,0,0,0,0,dateFocus.getZone()).getDayOfWeek().getValue();
-*/
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 7; j++) {
-                StackPane stackPane = new StackPane();
+    }
 
-                Rectangle rectangle = new Rectangle();
-                rectangle.setFill(Color.TRANSPARENT);
-                rectangle.setStroke(Color.BLACK);
-                rectangle.setStrokeWidth(strokeWidth);
-                double rectangleWidth = 20.0;
-                rectangle.setWidth(rectangleWidth);
-                double rectangleHeight = 60.0;
-                rectangle.setHeight(rectangleHeight);
-                stackPane.getChildren().add(rectangle);
-/*
-                int calculatedDate = (j+2)+(7*i);
-                if(calculatedDate > dateOffset){
-                    int currentDate = calculatedDate - dateOffset;
-                    if(currentDate <= monthMaxDate){
-                        Text date = new Text(String.valueOf(currentDate));
-                        double textTranslationY = - (rectangleHeight / 2) * 0.75;
-                        date.setTranslateY(textTranslationY);
-                        stackPane.getChildren().add(date);
-                        dayPaneMap.put(currentDate, stackPane);
+    private StackPane createBoxCell(double width, double height, Paint color, Paint background,Text text) {
+        Rectangle rect = new Rectangle(width, height);
+        rect.setStroke(color);
+        rect.setFill(background);
+        String name = text.getText();
+        text = new Text(name);
+        text.setStyle("-fx-font-weight: bold; -fx-font-size: 12;");
+        StackPane stack = new StackPane(rect, text);
+        return stack;
+    }
 
-                        List<ToDoCalendarActivity> calendarActivities = calendarActivityMap.get(currentDate);
-                        if(calendarActivities != null){
-                            createCalendarActivity(calendarActivities, rectangleHeight, rectangleWidth, stackPane);
-                        }
-                    }
-                    if(today.getYear() == dateFocus.getYear() && today.getMonth() == dateFocus.getMonth() && today.getDayOfMonth() == currentDate){
-                        rectangle.setStroke(Color.BLUE);
-                    }
-                }
-                calendar.getChildren().add(stackPane);*/
-            }
+    @FXML
+    private void insertTask(ActionEvent event) throws IOException {
+        if(this.chosenTime == null) {
+            JOptionPane.showMessageDialog(null, "Please choose time for your task first!");
+            insertTaskButton.setDisable(true);
+            return;
+        } else {
+            task.setTasksTime(chosenTime);
         }
+        Task tasks = task.createTask();
+        this.amountOfTasks++;
+        tasksToDB.add(tasks);
+        //Adding provided task details as values in hashMap
+        tasks.quartetCreator(tasks.getTasksTime(), tasks.getName(), tasks.getHowImportant(), tasks.getStatus());
+        HashMap<String, Task.Quartet> hashMapForTask;
+        //Creating hashMap using created quartet
+        hashMapForTask = tasks.addHashMapValue();
+        Task.Quartet quartetFromHashMap;
+        quartetFromHashMap = hashMapForTask.get("0");
+        Text textInsideCell = new Text(quartetFromHashMap.date());
+
+        //Adding date
+        taskList.getChildren().remove(taskList.getChildren().size() - (rowHelper));
+        rectangleStackPane = createBoxCell(rectangleDate.getWidth(), rectangleDate.getHeight(), rectangleFrame.getStroke(),
+                rectangleFrame.getFill(),textInsideCell);
+        taskList.getChildren().add(taskList.getChildren().size() - (rowHelper - 1),rectangleStackPane);
+
+        //Adding task
+        textInsideCell = new Text(quartetFromHashMap.name());
+        taskList.getChildren().remove(taskList.getChildren().size() - (rowHelper - 1));
+        rectangleStackPane = createBoxCell(rectangleTask.getWidth(), rectangleTask.getHeight(), rectangleFrame.getStroke(),
+                rectangleFrame.getFill(),textInsideCell);
+        taskList.getChildren().add(taskList.getChildren().size() - (rowHelper - 2),rectangleStackPane);
+
+        //Adding importance
+        textInsideCell = new Text(quartetFromHashMap.howImportant());
+        taskList.getChildren().remove(taskList.getChildren().size() - (rowHelper - 2));
+        rectangleStackPane = createBoxCell(rectangleDate.getWidth(), rectangleDate.getHeight(), rectangleFrame.getStroke(),
+                rectangleFrame.getFill(),textInsideCell);
+        taskList.getChildren().add(taskList.getChildren().size() - (rowHelper - 3),rectangleStackPane);
+
+        //Adding status
+        textInsideCell = new Text(quartetFromHashMap.status());
+        taskList.getChildren().remove(taskList.getChildren().size() - (rowHelper - 3));
+        rectangleStackPane = createBoxCell(rectangleDate.getWidth(), rectangleDate.getHeight(), rectangleFrame.getStroke(),
+                rectangleFrame.getFill(),textInsideCell);
+        taskList.getChildren().add(taskList.getChildren().size() - (rowHelper - 4),rectangleStackPane);
+
+        JOptionPane.showMessageDialog(null, "Task added successfully.", "Proceeded", JOptionPane.INFORMATION_MESSAGE);
+        this.mongoDBService.insertTask(tasksToDB);
+        this.chosenTime = null;
+        this.rowHelperDeleting = rowHelperDeleting - 5;
+        this.rowHelper = rowHelper - 5;
+        if(!checkIfCreated) {
+            this.checkIfCreated = true;
+        }
+
+        //for checking
+        System.out.println(rowHelper);
+        System.out.println(tasks.getTasks());
+        System.out.println(quartetFromHashMap);
+    }
+
+    @FXML
+    private void deleteTask(ActionEvent event) throws IOException {
+        Text blankCell = new Text("");
+        //Adding date
+        taskList.getChildren().remove(taskList.getChildren().size() - (rowHelperDeleting));
+        rectangleStackPane = createBoxCell(rectangleDate.getWidth(), rectangleDate.getHeight(), rectangleFrame.getStroke(),
+                rectangleFrame.getFill(),blankCell);
+        taskList.getChildren().add(taskList.getChildren().size() - (rowHelperDeleting - 1),rectangleStackPane);
+        //Adding task
+        taskList.getChildren().remove(taskList.getChildren().size() - (rowHelperDeleting - 1));
+        rectangleStackPane = createBoxCell(rectangleTask.getWidth(), rectangleTask.getHeight(), rectangleFrame.getStroke(),
+                rectangleFrame.getFill(), blankCell);
+        taskList.getChildren().add(taskList.getChildren().size() - (rowHelperDeleting - 2),rectangleStackPane);
+        //Adding importance
+        taskList.getChildren().remove(taskList.getChildren().size() - (rowHelperDeleting - 2));
+        rectangleStackPane = createBoxCell(rectangleDate.getWidth(), rectangleDate.getHeight(), rectangleFrame.getStroke(),
+                rectangleFrame.getFill(), blankCell);
+        taskList.getChildren().add(taskList.getChildren().size() - (rowHelperDeleting - 3),rectangleStackPane);
+        //Adding status
+        taskList.getChildren().remove(taskList.getChildren().size() - (rowHelperDeleting - 3));
+        rectangleStackPane = createBoxCell(rectangleDate.getWidth(), rectangleDate.getHeight(), rectangleFrame.getStroke(),
+                rectangleFrame.getFill(), blankCell);
+        taskList.getChildren().add(taskList.getChildren().size() - (rowHelperDeleting - 4),rectangleStackPane);
+
+        this.amountOfTasks--;
+
+        if(amountOfTasks > 0) {
+            this.rowHelperDeleting = rowHelperDeleting + 5;
+            this.rowHelper = rowHelper + 5;
+        } else {
+            System.out.println("All tasks deleted!");
+            this.rowHelperDeleting = 49;
+            this.rowHelper = 49;
+        }
+    }
+
+    private static GridBagConstraints getConstraints(int gridx, int gridy, int gridwidth) {
+        return getConstraints(gridx, gridy, gridwidth, GridBagConstraints.WEST);
+    }
+
+    private static GridBagConstraints getConstraints(
+            int gridx, int gridy, int gridwidth, int anchor) {
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.fill = GridBagConstraints.NONE;
+        gc.anchor = anchor;
+        gc.gridx = gridx;
+        gc.gridy = gridy;
+        gc.gridwidth = gridwidth;
+        return gc;
+    }
+
+    @FXML  //najwyzej sprawdzic czy overloading ok
+    private List<Task> showAllTasks(ActionEvent event) {
+        List<Task> tasks = mongoDBService.findAllActive(Task.class);
+        if(tasks.isEmpty() && !checkIfCreated) {
+            JOptionPane.showMessageDialog(null, "No tasks found!", "Task List", JOptionPane.INFORMATION_MESSAGE);
+            //System.out.println("No added activities.");
+            return null;
+        }
+        return tasks;
     }
 }
