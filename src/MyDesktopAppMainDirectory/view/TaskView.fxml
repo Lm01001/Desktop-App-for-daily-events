@@ -18,15 +18,15 @@
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="MyDesktopAppMainDirectory.controller.TaskController"
             stylesheets="@../style/style.css" styleClass="rootTask">
 
-    <FlowPane fx:id="taskList" layoutX="44.0" layoutY="116.0" prefHeight="498.0" prefWidth="716.0" hgap="0.5" vgap="0.5" alignment="TOP_CENTER"/>
-    <HBox alignment="CENTER" layoutX="163.0" layoutY="25.0" prefHeight="44.0" prefWidth="419.0">
+    <FlowPane fx:id="taskList" layoutX="192.0" layoutY="116.0" prefHeight="498.0" prefWidth="716.0" hgap="0.5" vgap="0.5" alignment="TOP_CENTER"/>
+    <HBox alignment="CENTER" layoutX="340.00" layoutY="35.0" prefHeight="44.0" prefWidth="420.0">
         <Text text="Create your tasks">
             <font>
                 <Font size="26.0" />
             </font>
         </Text>
     </HBox>
-    <HBox layoutX="14.0" layoutY="23.0" spacing="15.0">
+    <HBox layoutX="20.00" layoutY="20.00" spacing="15.0">
         <Button fx:id="insertTaskButton" text="+" onAction="#insertTask" />
         <Button fx:id="deleteTaskButton" text="-" onAction="#deleteTask" />
     </HBox>
@@ -48,10 +48,10 @@
     </HBox>-->
 
 
-    <HBox xmlns:fx="http://javafx.com/fxml" layoutX="650.0" layoutY="28.0" prefHeight="44.0">
+    <HBox xmlns:fx="http://javafx.com/fxml" layoutX="812.50" layoutY="44.0" prefHeight="44.0">
         <Button fx:id="timePick" text="Choose time" onAction="#choosingTasksTime" /><!--promptText="Enter time for a task"-->
     </HBox>
-    <HBox layoutX="697.5" layoutY="635.0"  prefHeight="44.0" spacing="25.0">
+    <HBox layoutX="950.0" layoutY="630.0"  prefHeight="50.0" prefWidth="200.0" spacing="15.0">
         <Button fx:id="showTasks" text="Show all tasks" onAction="#showAllTasks" />
         <Button fx:id="returnButton" text="Return" onAction="#returnButton"/>
     </HBox>

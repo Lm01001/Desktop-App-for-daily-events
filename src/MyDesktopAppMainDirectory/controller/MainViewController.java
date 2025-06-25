@@ -32,9 +32,9 @@ public class MainViewController {
                 URL fxmlUrl = getClass().getResource("/MyDesktopAppMainDirectory/view/ShoppingListView.fxml");
                 if(fxmlUrl == null)
                     throw new IllegalStateException("FXML file not found!");
-                Parent root = FXMLLoader.load(fxmlUrl);
+                Parent rootShoppingList = FXMLLoader.load(fxmlUrl);
                 Stage stage = (Stage) calendarButton.getScene().getWindow();
-                Scene scene = new Scene(root);
+                Scene scene = new Scene(rootShoppingList);
                 stage.setTitle("Shopping List");
                 String css = Objects.requireNonNull(getClass().getResource("/MyDesktopAppMainDirectory/style/style.css")).toExternalForm();
                 scene.getStylesheets().add(css);

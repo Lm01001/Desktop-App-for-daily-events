@@ -1,6 +1,6 @@
-package MyDesktopAppMainDirectory;
+package MyDesktopAppMainDirectory.test;
 
-import MyDesktopAppMainDirectory.database.MongoDBService;
+/*import MyDesktopAppMainDirectory.database.MongoDBService;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
 
-import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;*/
 
 
 public class Preview  {

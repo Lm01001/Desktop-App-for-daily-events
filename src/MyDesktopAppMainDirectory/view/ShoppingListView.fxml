@@ -11,8 +11,8 @@
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="MyDesktopAppMainDirectory.controller.ShoppingListController"
             stylesheets="@../style/style.css" styleClass="rootShoppingList">
 
-    <FlowPane fx:id="shoppingListPane" layoutX="44.0" layoutY="116.0" prefHeight="498.0" prefWidth="716.0" hgap="0.5" vgap="0.5" alignment="TOP_CENTER"/>
-    <HBox alignment="CENTER" layoutX="163.0" layoutY="25.0" prefHeight="44.0" prefWidth="419.0">
+    <FlowPane fx:id="shoppingListPane" layoutX="192.0" layoutY="100.0" prefHeight="498.0" prefWidth="716.0" hgap="0.5" vgap="0.5" alignment="TOP_CENTER"/>
+    <HBox alignment="CENTER" layoutX="340.0" layoutY="35.0" prefHeight="44.0" prefWidth="420.0">
         <Text text="Add product to the list">
             <font>
                 <Font size="26.0" />
@@ -25,11 +25,11 @@
         <Button fx:id="deleteTask" text="-" onAction="#deleteTask" />
     </HBox> -->
 
-    <HBox layoutX="600.0" layoutY="635.0"  prefHeight="44.0" spacing="25.0">
+    <HBox layoutX="860.0" layoutY="630.0"  prefHeight="50.0" prefWidth="200.0" spacing="15.0">
         <Button fx:id="showProducts" text="Show added products" onAction="#showAllAddedProducts" />
         <Button fx:id="returnButton" text="Return" onAction="#returnButton"/>
     </HBox>
-    <HBox layoutX="14.0" layoutY="23.0" spacing="15.0">
+    <HBox layoutX="20.0" layoutY="20.0" spacing="15.0">
         <Button fx:id="insertTask" text="+" onAction="#insertProduct" />
         <Button fx:id="deleteTask" text="-" onAction="#deleteProduct" />
     </HBox>
